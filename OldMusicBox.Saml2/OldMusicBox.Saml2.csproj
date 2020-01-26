@@ -43,6 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants\Binding.cs" />
+    <Compile Include="Constants\Namespaces.cs" />
+    <Compile Include="Constants\ProtocolVersion.cs" />
     <Compile Include="Core\Saml2SecurityToken.cs" />
     <Compile Include="Core\Saml2SecurityTokenHandler.cs" />
     <Compile Include="Logging\ILogger.cs" />
@@ -52,6 +54,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Request\AuthnRequestFactory.cs" />
     <Compile Include="Request\AuthnRequestModel.cs" />
+    <Compile Include="Signature\ISignableMessage.cs" />
+    <Compile Include="Signature\SignatureAlgorithm.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

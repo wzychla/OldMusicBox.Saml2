@@ -1,6 +1,8 @@
-﻿using OldMusicBox.Saml2.Request;
+﻿using OldMusicBox.Saml2.Constants;
+using OldMusicBox.Saml2.Request;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Security.Claims;
 using System.Web;
@@ -25,23 +27,30 @@ namespace OldMusicBox.Saml2.DemoClient.Controllers
             // check if this is 
             if ( !saml2.IsSignInResponse( request ) )
             {
-                // creates the consumer assertion url (the url the IdP will redirect to)
-                // this should possibly be tweaked to handle the scenario
-                // your app is behind a rev proxy (so that the address should fix
-                // the HTTPs scheme)
-                var consumerAssertionUrl = Url.Action("Logon", "Account", null);
-
+                // AuthnRequest factory
                 var authnRequestFactory = new AuthnRequestFactory();
-                var authnRequest        = authnRequestFactory.Create();
 
-                switch ( authnRequestFactory.Binding )
+                // parameters
+                var assertionConsumerServiceURL = ConfigurationManager.AppSettings["AssertionConsumerServiceURL"];
+                var assertionIssuer             = ConfigurationManager.AppSettings["AssertionIssuer"];
+                var identityProvider            = ConfigurationManager.AppSettings["IdentityProvider"];
+
+                authnRequestFactory.AssertionConsumerServiceURL = assertionConsumerServiceURL;
+                authnRequestFactory.AssertionIssuer             = assertionIssuer;
+                authnRequestFactory.IdentityProvider            = identityProvider;
+
+                authnRequestFactory.RequestBinding  = Binding.REDIRECT;
+                authnRequestFactory.ResponseBinding = Binding.REDIRECT;
+
+                var authnRequestContent = authnRequestFactory.BuildContent();
+                switch ( authnRequestFactory.RequestBinding )
                 {
                     case Constants.Binding.REDIRECT:
-                        return Redirect(authnRequest);
+                        return Redirect(authnRequestContent);
                     case Constants.Binding.POST:
-                        return Content(authnRequest);
+                        return Content(authnRequestContent);
                     default:
-                        throw new ArgumentException(string.Format("The {0} binding is not supported", authnRequestFactory.Binding ) );
+                        throw new ArgumentException(string.Format("The {0} request binding is not supported", authnRequestFactory.RequestBinding ) );
                 }
             }
             else
