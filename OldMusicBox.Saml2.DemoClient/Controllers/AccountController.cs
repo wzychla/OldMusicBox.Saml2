@@ -37,12 +37,12 @@ namespace OldMusicBox.Saml2.DemoClient.Controllers
 
                 authnRequestFactory.AssertionConsumerServiceURL = assertionConsumerServiceURL;
                 authnRequestFactory.AssertionIssuer             = assertionIssuer;
-                authnRequestFactory.IdentityProvider            = identityProvider;
+                authnRequestFactory.Destination                 = identityProvider;
 
                 authnRequestFactory.RequestBinding  = Binding.REDIRECT;
                 authnRequestFactory.ResponseBinding = Binding.REDIRECT;
 
-                var authnRequestContent = authnRequestFactory.BuildContent();
+                var authnRequestContent = authnRequestFactory.CreateBindingContent();
                 switch ( authnRequestFactory.RequestBinding )
                 {
                     case Constants.Binding.REDIRECT:

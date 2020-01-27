@@ -4,13 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OldMusicBox.Saml2.Signature
+namespace OldMusicBox.Saml2.Serialization
 {
     /// <summary>
-    /// Interface that marks signable messages
-    /// * AuthnRequest
+    /// Interface that marks serializable messages
     /// </summary>
-    public interface ISignableMessage
+    public interface ISerializableMessage
     {
     }
 }

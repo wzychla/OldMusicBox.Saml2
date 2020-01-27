@@ -24,14 +24,15 @@ namespace OldMusicBox.Saml2
     /// </remarks>
     public class Saml2AuthenticationModule 
     {
-        public const string SAMLRESPONSE = "SamlResponse";
+        public const string SAMLREQUEST  = "SAMLRequest";
+        public const string SAMLRESPONSE = "SAMLResponse";
 
         /// <summary>
         /// The SAML2 response (AuthnResponse) is passed:
         /// * in the querystring - the REDIRECT binding
         /// * in the form - the POST binding
         /// </summary>
-        public bool IsSignInResponse(HttpRequestBase request)
+        public virtual bool IsSignInResponse(HttpRequestBase request)
         {
             if ( request == null)
             {
@@ -46,7 +47,7 @@ namespace OldMusicBox.Saml2
         /// <summary>
         /// Obtains the token from the Request (which is an IdP's response)
         /// </summary>
-        public Saml2SecurityToken GetSecurityToken( HttpRequestBase request )
+        public virtual Saml2SecurityToken GetSecurityToken( HttpRequestBase request )
         {
             return null;
         }

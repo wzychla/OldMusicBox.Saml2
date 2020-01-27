@@ -11,8 +11,9 @@ Current Version: 0.2
 
 Version History:
 
-* 0.2 - complete `AuthnRequest` model
-* 0.1 - core SAML2 elements: the module and the token 
+* 0.25 - REDIRECT binding client already redirects to the IdentityProvider 
+* 0.20 - complete `AuthnRequest` model
+* 0.10 - core SAML2 elements: the module and the token 
 
 Roadmap:
 
@@ -25,5 +26,6 @@ Roadmap:
 
 * later on
 
+    * client/server metadata
     * server side next so that it's possible to create the Saml2 Identity Provider compatible with existing clients (e.g. JIRA)
     * support at least REDIRECT and POST server's bindings

@@ -1,10 +1,12 @@
 ﻿using OldMusicBox.Saml2.Constants;
+using OldMusicBox.Saml2.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace OldMusicBox.Saml2.Request
 {
@@ -13,9 +15,17 @@ namespace OldMusicBox.Saml2.Request
     /// </summary>
     public class AuthnRequestFactory
     {
-        public AuthnRequestFactory()
+        public AuthnRequestFactory() : this(new DefaultMessageSerializer()) { }
+
+        public AuthnRequestFactory(IMessageSerializer messageSerializer)
         {
-            this.AuthnRequest = new AuthnRequestModel();
+            if ( messageSerializer == null )
+            {
+                throw new ArgumentNullException("messageSerializer", "The message serializer cannot be null");
+            }
+
+            this.AuthnRequest      = new AuthnRequestModel();
+            this.MessageSerializer = messageSerializer;
 
             this.AuthnRequest.ID           = string.Format("id_{0}", Guid.NewGuid());
             this.AuthnRequest.IssueInstant = DateTime.UtcNow;
@@ -25,6 +35,8 @@ namespace OldMusicBox.Saml2.Request
         }
 
         public AuthnRequestModel AuthnRequest { get; private set; }
+
+        public IMessageSerializer MessageSerializer { get; set; }
 
         /// <summary>
         /// Assertion Consumer Service URL        
@@ -71,7 +83,7 @@ namespace OldMusicBox.Saml2.Request
         /// <summary>
         /// The Identity Provider
         /// </summary>
-        public string IdentityProvider
+        public string Destination
         {
             get
             {
@@ -126,18 +138,66 @@ namespace OldMusicBox.Saml2.Request
         /// * a query string the client should redirect to (REDIRECT binding)
         /// * a web page containing a form that POSTs the token to the IdP (POST binding)
         /// </remarks>
-        public string BuildContent()
+        public virtual string CreateBindingContent()
         {
             if ( string.IsNullOrEmpty( this.RequestBinding ) )
             {
-                throw new ArgumentNullException("Request Binding cannot be null");
+                throw new ArgumentNullException("RequestBinding", "Request Binding cannot be null");
             }
             if (string.IsNullOrEmpty( this.ResponseBinding ) )
             {
-                throw new ArgumentNullException("Response Binding cannot be null");
+                throw new ArgumentNullException("ResponseBinding", "Response Binding cannot be null");
+            }
+            if ( string.IsNullOrEmpty( this.Destination ))
+            {
+                throw new ArgumentNullException("Destination", "Response Binding cannot be null");
             }
 
-            return string.Empty;
+            switch ( this.RequestBinding )
+            {
+                case Binding.REDIRECT:
+                    return this.CreateRedirectBindingContent();
+                default:
+                    throw new ArgumentException(string.Format("Request binding {0} is not yet supported", this.RequestBinding));
+            }
         }
+
+        #region Implementation
+
+        #region Redirect binding
+
+        /// <summary>
+        /// Redirect binding should return a redirect uri that conforms to Saml2 specs
+        /// </summary>
+        protected virtual string CreateRedirectBindingContent()
+        {
+            var uri         = new UriBuilder(this.Destination);
+            var queryString = HttpUtility.ParseQueryString(string.Empty);
+
+            // request        
+            var samlRequest =
+                this.MessageSerializer.Serialize(
+                    this.AuthnRequest,
+                    new MessageSerializationParameters()
+                    {
+                        ShouldBase64Encode = true,
+                        ShouldDeflate      = true,
+                        ShouldUrlEncode    = false
+                    });
+            queryString.Add(Saml2AuthenticationModule.SAMLREQUEST, samlRequest);
+            // relay state?
+            if ( !string.IsNullOrEmpty( this.RelayState ) )
+            {
+                queryString.Add("RelayState", this.RelayState);
+            }
+            uri.Query = queryString.ToString();
+
+            // return the uri
+            return uri.ToString();
+        } 
+
+        #endregion
+
+        #endregion
     }
 }

@@ -1,4 +1,5 @@
 ﻿using OldMusicBox.Saml2.Constants;
+using OldMusicBox.Saml2.Serialization;
 using OldMusicBox.Saml2.Signature;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,9 @@ namespace OldMusicBox.Saml2.Request
     /// SAML2 AuthnRequest model
     /// </summary>
     [XmlRoot("AuthnRequest", Namespace=Namespaces.PROTOCOL)]
-    public class AuthnRequestModel : ISignableMessage
+    public class AuthnRequestModel : 
+        ISerializableMessage,
+        ISignableMessage
     {
         [XmlAttribute("AssertionConsumerServiceURL")]
         public string AssertionConsumerServiceURL { get; set; }
