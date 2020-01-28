@@ -11,14 +11,14 @@ namespace OldMusicBox.Saml2.Logging
     /// </summary>
     public class LoggerFactory
     {
-        private static Func<ILogger> _loggerProvider;
+        private static Func<Type, AbstractLogger> _loggerProvider;
 
         static LoggerFactory()
         {
-            _loggerProvider = () => new NullLogger();
+            _loggerProvider = (type) => new NullLogger();
         }
 
-        public static void SetProvider( Func<ILogger> loggerProvider )
+        public static void SetProvider( Func<Type, AbstractLogger> loggerProvider )
         {
             if ( loggerProvider != null )
             {
@@ -26,15 +26,15 @@ namespace OldMusicBox.Saml2.Logging
             }
             else
             {
-                _loggerProvider = () => new NullLogger();
+                _loggerProvider = (type) => new NullLogger();
             }
         }
 
-        public ILogger Create()
+        public AbstractLogger For(Type type)
         {
             if (_loggerProvider == null) throw new ArgumentNullException();
 
-            return _loggerProvider ();
+            return _loggerProvider(type);
         }
     }
 }

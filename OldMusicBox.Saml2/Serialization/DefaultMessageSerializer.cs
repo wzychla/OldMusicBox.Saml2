@@ -1,4 +1,5 @@
 ﻿using OldMusicBox.Saml2.Constants;
+using OldMusicBox.Saml2.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -60,10 +61,13 @@ namespace OldMusicBox.Saml2.Serialization
                 using (var xmlWriter = XmlWriter.Create(writer, xmlWriterSettings))
                 {
                     var xmlSerializer = new XmlSerializer(entity.GetType());
-                    xmlSerializer.Serialize(xmlWriter, entity, new Namespaces().CreateSerializerNamespaces());
+                    xmlSerializer.Serialize(xmlWriter, entity, Namespaces.SerializerNamespaces);
                 }
 
                 var rawEntity = writer.ToString();
+
+                // log
+                new LoggerFactory().For(typeof(DefaultMessageSerializer)).Debug(Event.RawAuthnRequest, rawEntity);
 
                 serializedBytes = this.Encoding.GetBytes(rawEntity);
             }

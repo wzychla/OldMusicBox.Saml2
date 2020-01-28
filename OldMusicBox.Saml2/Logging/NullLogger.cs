@@ -9,13 +9,18 @@ namespace OldMusicBox.Saml2.Logging
     /// <summary>
     /// Null Logger
     /// </summary>
-    public class NullLogger : ILogger
+    public class NullLogger : AbstractLogger
     {
-        public void Debug(string Message)
+        public override bool ShouldDebug(Event evnt)
+        {
+            return true;
+        }
+
+        public override void Debug(string Message)
         {
         }
 
-        public void Error(string Message, Exception ex)
+        public override void Error(string Message, Exception ex)
         {
         }
     }

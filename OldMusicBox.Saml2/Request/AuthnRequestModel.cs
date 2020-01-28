@@ -30,7 +30,7 @@ namespace OldMusicBox.Saml2.Request
         [XmlAttribute("IssueInstant")]
         public DateTime IssueInstant { get; set; }
 
-        [XmlAttribute("Issuer", Namespace = Namespaces.ASSERTION )]
+        [XmlElement("Issuer", Namespace = Namespaces.ASSERTION )]
         public string Issuer { get; set; }
 
         [XmlElement("NameIDPolicy", Namespace = Namespaces.PROTOCOL)]
@@ -39,8 +39,8 @@ namespace OldMusicBox.Saml2.Request
         [XmlAttribute("ProtocolBinding")]
         public string ProtocolBinding { get; set; }
 
-        [XmlElement("RequestAuthnContext", Namespace = Namespaces.PROTOCOL )]
-        public RequestAuthContext RequestAuthnContext { get; set; }
+        [XmlElement("RequestedAuthnContext", Namespace = Namespaces.PROTOCOL )]
+        public RequestAuthContext RequestedAuthnContext { get; set; }
 
         [XmlAttribute("Version")]
         public string Version { get; set; }

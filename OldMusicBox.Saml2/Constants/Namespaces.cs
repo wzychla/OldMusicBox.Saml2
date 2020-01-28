@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace OldMusicBox.Saml2.Constants
@@ -31,15 +32,35 @@ namespace OldMusicBox.Saml2.Constants
         /// In order to conform to common SAML namespacing, the serializer
         /// needs to be told how do to it
         /// </summary>
-        public XmlSerializerNamespaces CreateSerializerNamespaces()
+        public static XmlSerializerNamespaces SerializerNamespaces
         {
-            var serializerNamespaces = new XmlSerializerNamespaces();
+            get
+            {
+                var serializerNamespaces = new XmlSerializerNamespaces();
 
-            serializerNamespaces.Add("ds",    Namespaces.XMLDSIG);
-            serializerNamespaces.Add("saml",  Namespaces.ASSERTION);
-            serializerNamespaces.Add("samlp", Namespaces.PROTOCOL);
+                serializerNamespaces.Add("ds", Namespaces.XMLDSIG);
+                serializerNamespaces.Add("saml", Namespaces.ASSERTION);
+                serializerNamespaces.Add("samlp", Namespaces.PROTOCOL);
 
-            return serializerNamespaces;
+                return serializerNamespaces;
+            }
+        }
+
+        /// <summary>
+        /// Same as above but for deserialization
+        /// </summary>
+        public static XmlNamespaceManager DeserializerNamespaces
+        {
+            get
+            {
+                var deserializerNamespaces = new XmlNamespaceManager(new NameTable());
+
+                deserializerNamespaces.AddNamespace("ds", Namespaces.XMLDSIG);
+                deserializerNamespaces.AddNamespace("saml", Namespaces.ASSERTION);
+                deserializerNamespaces.AddNamespace("samlp", Namespaces.PROTOCOL);
+
+                return deserializerNamespaces;
+            }
         }
     }
 }
