@@ -57,9 +57,9 @@ namespace OldMusicBox.Saml2.DemoClient.Controllers
             {
                 // the token is created from the IdP's response
                 var securityToken = saml2.GetSecurityToken(request);
-                var tokenHandler  = new Saml2SecurityTokenHandler();
 
                 // the token is validated
+                var tokenHandler = new Saml2SecurityTokenHandler();
                 var identity  = tokenHandler.ValidateToken(securityToken);
                 var principal = new ClaimsPrincipal(identity);
 

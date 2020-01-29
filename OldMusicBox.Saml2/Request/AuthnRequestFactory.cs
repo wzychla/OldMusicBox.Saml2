@@ -219,7 +219,7 @@ namespace OldMusicBox.Saml2.Request
                         ShouldBase64Encode = true,
                         ShouldDeflate      = true
                     });
-            queryString.Add(Saml2AuthenticationModule.SAMLREQUEST, samlRequest);
+            queryString.Add(Elements.SAMLREQUEST, samlRequest);
             // relay state?
             if ( !string.IsNullOrEmpty( this.RelayState ) )
             {

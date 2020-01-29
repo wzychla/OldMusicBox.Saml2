@@ -12,7 +12,7 @@ namespace OldMusicBox.Saml2.Serialization
     public interface IMessageSerializer
     {
         string Serialize(ISerializableMessage entity, MessageSerializationParameters parameters );
-        T Deserialize<T>(string input) where T : ISerializableMessage;
+        T Deserialize<T>(string input, MessageDeserializationParameters parameters) where T : class, ISerializableMessage;
     }
 
     public class MessageSerializationParameters
@@ -30,5 +30,22 @@ namespace OldMusicBox.Saml2.Serialization
 
         public bool ShouldBase64Encode { get; set; }
         public bool ShouldDeflate { get; set; }
+    }
+
+    public class MessageDeserializationParameters
+    {
+        public MessageDeserializationParameters() { }
+
+        public MessageDeserializationParameters(
+            bool shouldDebase64Encode,
+            bool shouldInflate
+            )
+        {
+            this.ShouldDebase64Encode = shouldDebase64Encode;
+            this.ShouldInflate        = shouldInflate;
+        }
+
+        public bool ShouldDebase64Encode { get; set; }
+        public bool ShouldInflate { get; set; }
     }
 }

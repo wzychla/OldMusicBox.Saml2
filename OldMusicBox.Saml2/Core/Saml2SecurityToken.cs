@@ -50,7 +50,14 @@ namespace OldMusicBox.Saml2
                     throw new Saml2Exception("The samlp:Response node not found");
                 }
 
-                this.Response = serializer.Deserialize<ResponseModel>(responseNode.OuterXml);                
+                this.Response = 
+                    serializer.Deserialize<ResponseModel>(
+                        responseNode.OuterXml,
+                        new MessageDeserializationParameters()
+                        {
+                            ShouldDebase64Encode = false,
+                            ShouldInflate        = false
+                        });               
             }
             catch ( Exception ex )
             {

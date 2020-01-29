@@ -1,4 +1,6 @@
-﻿using System;
+﻿using OldMusicBox.Saml2.Constants;
+using OldMusicBox.Saml2.Message;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,9 +26,6 @@ namespace OldMusicBox.Saml2
     /// </remarks>
     public class Saml2AuthenticationModule 
     {
-        public const string SAMLREQUEST  = "SAMLRequest";
-        public const string SAMLRESPONSE = "SAMLResponse";
-
         /// <summary>
         /// The SAML2 response (AuthnResponse) is passed:
         /// * in the querystring - the REDIRECT binding
@@ -40,8 +39,8 @@ namespace OldMusicBox.Saml2
             }
 
             return
-                (request.HttpMethod == "GET"  && request.QueryString[SAMLRESPONSE] != null) ||
-                (request.HttpMethod == "POST" && request.Form[SAMLRESPONSE] != null);
+                (request.HttpMethod == "GET"  && request.QueryString[Elements.SAMLRESPONSE] != null) ||
+                (request.HttpMethod == "POST" && request.Form[Elements.SAMLRESPONSE] != null);
         }
 
         /// <summary>
@@ -49,7 +48,15 @@ namespace OldMusicBox.Saml2
         /// </summary>
         public virtual Saml2SecurityToken GetSecurityToken( HttpRequestBase request )
         {
-            return null;
+            var rawMessage = new RawMessageFactory().FromIdpResponse(request);
+            if ( rawMessage == null ||
+                 string.IsNullOrEmpty( rawMessage.Payload )
+                )
+            {
+                throw new ArgumentException("IdP response doesn't containt the SAML2 Response");
+            }
+
+            return new Saml2SecurityToken(rawMessage.Payload);
         }
     }
 }

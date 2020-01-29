@@ -36,10 +36,32 @@ namespace OldMusicBox.Saml2.Serialization
 
         public Encoding Encoding { get; set; }
 
-        public virtual T Deserialize<T>(string input) 
-            where T : ISerializableMessage
+        public virtual T Deserialize<T>(
+            string input,
+            MessageDeserializationParameters parameters)
+            where T : class, ISerializableMessage
         {
-            throw new NotImplementedException();
+            // base64?
+            var data =
+                parameters.ShouldDebase64Encode
+                ? Convert.FromBase64String(input)
+                : Encoding.GetBytes(input);
+
+            // inflate?
+            if (parameters.ShouldInflate)
+            {
+                data = this.Inflate(data);
+            }
+
+            var rawString = Encoding.GetString(data);
+
+            using (var reader = new StringReader(rawString))
+            {
+                var xmlSerializer = new XmlSerializer(typeof(T));
+                var rawObject = xmlSerializer.Deserialize(reader);
+
+                return rawObject as T;
+            }
         }
 
         /// <summary>

@@ -8,9 +8,12 @@ Features:
 * target classic .NET Framework, make it .NET Core compatible soon
 * provide both client and server side implementation of Saml2
 
-Current Version: 0.30
+Current Version: 0.31
 
 Version History:
+
+* 0.31 
+    - SAML response deserializes 
 
 * 0.30 
     - POST binding client correctly redirects to the ADFS    
