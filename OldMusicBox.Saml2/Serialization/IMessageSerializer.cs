@@ -21,17 +21,14 @@ namespace OldMusicBox.Saml2.Serialization
 
         public MessageSerializationParameters(
             bool shouldBase64Encode,
-            bool shouldDeflate,
-            bool shouldUrlEncode
+            bool shouldDeflate
             )
         {
             this.ShouldBase64Encode = shouldBase64Encode;
             this.ShouldDeflate      = shouldDeflate;
-            this.ShouldUrlEncode    = ShouldUrlEncode;
         }
 
         public bool ShouldBase64Encode { get; set; }
         public bool ShouldDeflate { get; set; }
-        public bool ShouldUrlEncode { get; set; }
     }
 }

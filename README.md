@@ -8,27 +8,41 @@ Features:
 * target classic .NET Framework, make it .NET Core compatible soon
 * provide both client and server side implementation of Saml2
 
-Current Version: 0.29
+Current Version: 0.30
 
 Version History:
 
-* 0.29 - added most of `Response` models
-* 0.25 - REDIRECT binding client correctly redirects to the ADFS 
-* 0.20 - complete `AuthnRequest` model
-* 0.10 - core SAML2 elements: the module and the token 
+* 0.30 
+    - POST binding client correctly redirects to the ADFS    
+    - both POST and REDIRECT clients correctly get the response from the ADFS, however the response is not yet parsed and validated as a SAML2 token
+* 0.29 
+    - added most of `Response` models
+* 0.25 
+    - REDIRECT binding client correctly redirects to the ADFS 
+* 0.20 
+    - complete `AuthnRequest` model
+* 0.10 
+    - core SAML2 elements: the module and the token 
 
 Roadmap:
 
-* 0.1-0.49 - development versions lacking core features
+* 0.1-0.49 
+    - development versions lacking core features
 
-* 0.5 - first important milestone, client can authenticate agaist Microsoft ADFS using 
-    * REDIRECT Request binding
-    * REDIRECT Response binding
+* 0.5 
+    - first important milestone, client can authenticate agaist Microsoft ADFS using 
+        * REDIRECT Request binding
+        * POST Response binding
+    - fit existing `System.IdentityModel` infrastructure, including `IssuerNameRegistry` and `X509CerfificateValidator`
+
+* 0.75 
+
+    - support AuthnRequest signing
 
 * 1.0 
     * client side interface so that it's possible to login against ADFS using any combination of supported Request/Response bindings
     * support at least REDIRECT, POST and ARTIFACT client's bindings
-    * fit existing `System.IdentityModel` infrastructure, including `IssuerNameRegistry` and `X509CerfificateValidator`
+    * `LogoutRequest`, `LogoutResponse`
 
 * later on
 

@@ -39,8 +39,8 @@ namespace OldMusicBox.Saml2.DemoClient.Controllers
                 authnRequestFactory.AssertionIssuer             = assertionIssuer;
                 authnRequestFactory.Destination                 = identityProvider;
 
-                authnRequestFactory.RequestBinding  = Binding.REDIRECT;
-                authnRequestFactory.ResponseBinding = Binding.REDIRECT;
+                authnRequestFactory.RequestBinding  = Binding.POST;
+                authnRequestFactory.ResponseBinding = Binding.POST;
 
                 var authnRequestContent = authnRequestFactory.CreateBindingContent();
                 switch ( authnRequestFactory.RequestBinding )

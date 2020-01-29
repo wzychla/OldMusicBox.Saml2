@@ -55,6 +55,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Request\AuthnRequestFactory.cs" />
     <Compile Include="Request\AuthnRequestModel.cs" />
+    <Compile Include="Resources\ResourceFactory.cs" />
     <Compile Include="Response\Assertion.cs" />
     <Compile Include="Response\ResponseModel.cs" />
     <Compile Include="Response\Signature.cs" />
@@ -64,6 +65,9 @@
     <Compile Include="Serialization\ISerializableMessage.cs" />
     <Compile Include="Signature\ISignableMessage.cs" />
     <Compile Include="Signature\SignatureAlgorithm.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\AuthnRequestPostBinding.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

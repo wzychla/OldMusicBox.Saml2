@@ -31,6 +31,9 @@ namespace OldMusicBox.Saml2.Logging
     /// </summary>
     public enum Event
     {
-        RawAuthnRequest
+        // raw authnrequest token
+        RawAuthnRequest,
+        // complete post binding page
+        PostBindingPage
     }
 }

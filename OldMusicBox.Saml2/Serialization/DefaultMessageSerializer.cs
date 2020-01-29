@@ -81,10 +81,6 @@ namespace OldMusicBox.Saml2.Serialization
             {
                 serializedBytes = this.Encoding.GetBytes(Convert.ToBase64String(serializedBytes));
             }
-            if (parameters.ShouldUrlEncode)
-            {
-                serializedBytes = this.Encoding.GetBytes( HttpUtility.UrlEncode(serializedBytes) );
-            }
 
             return this.Encoding.GetString(serializedBytes);
         }

@@ -1,4 +1,6 @@
 ﻿using OldMusicBox.Saml2.Constants;
+using OldMusicBox.Saml2.Logging;
+using OldMusicBox.Saml2.Resources;
 using OldMusicBox.Saml2.Serialization;
 using System;
 using System.Collections.Generic;
@@ -155,14 +157,48 @@ namespace OldMusicBox.Saml2.Request
 
             switch ( this.RequestBinding )
             {
+                case Binding.POST:
+                    return this.CreatePostBindingContent();
                 case Binding.REDIRECT:
-                    return this.CreateRedirectBindingContent();
+                    return this.CreateRedirectBindingContent();                
                 default:
                     throw new ArgumentException(string.Format("Request binding {0} is not yet supported", this.RequestBinding));
             }
         }
 
         #region Implementation
+
+        #region Post binding
+
+        /// <summary>
+        /// Post binding should return the AuthnRequest in a web page that posts to the identity provider
+        /// </summary>
+        protected virtual string CreatePostBindingContent()
+        {
+            string contentPage = new ResourceFactory().Create(ResourceFactory.EmbeddedResource.AuthnRequestPostBinding);
+
+            contentPage = contentPage.Replace("((Destination))", this.Destination);
+            contentPage = contentPage.Replace("((SAMLRequest))", this.CreatePostBindingToken());
+            contentPage = contentPage.Replace("((RelayState))", this.RelayState);
+
+            // log
+            new LoggerFactory().For(typeof(DefaultMessageSerializer)).Debug(Event.PostBindingPage, contentPage);
+
+            return contentPage;
+        }
+
+        protected virtual string CreatePostBindingToken()
+        {
+            return this.MessageSerializer.Serialize(
+                this.AuthnRequest,
+                new MessageSerializationParameters()
+                {
+                    ShouldBase64Encode = true,
+                    ShouldDeflate = false
+                });
+        }
+
+        #endregion
 
         #region Redirect binding
 
@@ -181,8 +217,7 @@ namespace OldMusicBox.Saml2.Request
                     new MessageSerializationParameters()
                     {
                         ShouldBase64Encode = true,
-                        ShouldDeflate      = true,
-                        ShouldUrlEncode    = false
+                        ShouldDeflate      = true
                     });
             queryString.Add(Saml2AuthenticationModule.SAMLREQUEST, samlRequest);
             // relay state?
