@@ -182,7 +182,7 @@ namespace OldMusicBox.Saml2.Request
             contentPage = contentPage.Replace("((RelayState))", this.RelayState);
 
             // log
-            new LoggerFactory().For(typeof(DefaultMessageSerializer)).Debug(Event.PostBindingPage, contentPage);
+            new LoggerFactory().For(this).Debug(Event.PostBindingPage, contentPage);
 
             return contentPage;
         }

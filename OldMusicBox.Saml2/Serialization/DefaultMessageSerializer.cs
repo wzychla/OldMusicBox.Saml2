@@ -89,7 +89,7 @@ namespace OldMusicBox.Saml2.Serialization
                 var rawEntity = writer.ToString();
 
                 // log
-                new LoggerFactory().For(typeof(DefaultMessageSerializer)).Debug(Event.RawAuthnRequest, rawEntity);
+                new LoggerFactory().For(this).Debug(Event.RawAuthnRequest, rawEntity);
 
                 serializedBytes = this.Encoding.GetBytes(rawEntity);
             }
@@ -135,10 +135,24 @@ namespace OldMusicBox.Saml2.Serialization
                 {
                     using (var reader = new BinaryReader(inflate, this.Encoding))
                     {
-                        return reader.ReadBytes( int.MaxValue );
+                        return ReadAllBytes( reader );
                     }
                 }
             }
+        }
+
+        private byte[] ReadAllBytes(BinaryReader reader)
+        {
+            const int bufferSize = 4096;
+            using (var ms = new MemoryStream())
+            {
+                byte[] buffer = new byte[bufferSize];
+                int count;
+                while ((count = reader.Read(buffer, 0, buffer.Length)) != 0)
+                    ms.Write(buffer, 0, count);
+                return ms.ToArray();
+            }
+
         }
 
         #endregion

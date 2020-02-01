@@ -1,4 +1,5 @@
 ﻿using OldMusicBox.Saml2.Constants;
+using OldMusicBox.Saml2.Logging;
 using OldMusicBox.Saml2.Message;
 using System;
 using System.Collections.Generic;
@@ -55,6 +56,9 @@ namespace OldMusicBox.Saml2
             {
                 throw new ArgumentException("IdP response doesn't containt the SAML2 Response");
             }
+
+            // log
+            new LoggerFactory().For(this).Debug(Event.RawAuthnRequest, rawMessage.Payload);
 
             return new Saml2SecurityToken(rawMessage.Payload);
         }

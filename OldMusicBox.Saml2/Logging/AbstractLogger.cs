@@ -34,6 +34,8 @@ namespace OldMusicBox.Saml2.Logging
         // raw authnrequest token
         RawAuthnRequest,
         // complete post binding page
-        PostBindingPage
+        PostBindingPage,
+        // whatever comes as SAMLResponse
+        RawResponse,
     }
 }

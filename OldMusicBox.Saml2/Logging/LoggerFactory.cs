@@ -36,5 +36,13 @@ namespace OldMusicBox.Saml2.Logging
 
             return _loggerProvider(type);
         }
+
+        public AbstractLogger For(object o)
+        {
+            if (_loggerProvider == null) throw new ArgumentNullException();
+            if ( o == null ) throw new ArgumentNullException();
+
+            return _loggerProvider(o.GetType());
+        }
     }
 }

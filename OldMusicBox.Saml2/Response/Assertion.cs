@@ -47,7 +47,7 @@ namespace OldMusicBox.Saml2.Response
         public string Name { get; set; }
 
         [XmlElement("AttributeValue", Namespace = Namespaces.ASSERTION)]
-        public string AttributeValue { get; set; }
+        public string[] AttributeValue { get; set; }
     }
 
     public class AttributeStatement

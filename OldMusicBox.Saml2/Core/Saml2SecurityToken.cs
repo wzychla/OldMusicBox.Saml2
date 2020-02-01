@@ -68,7 +68,7 @@ namespace OldMusicBox.Saml2
         /// <summary>
         /// Token is always built from the IdP response
         /// </summary>
-        private ResponseModel Response { get; set; }
+        public ResponseModel Response { get; private set; }
 
         public override string Id
         {

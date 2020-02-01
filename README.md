@@ -8,9 +8,13 @@ Features:
 * target classic .NET Framework, make it .NET Core compatible soon
 * provide both client and server side implementation of Saml2
 
-Current Version: 0.31
+Current Version: 0.40
 
 Version History:
+
+* 0.40
+
+    - Claims identity is already created from the token but the token validation is not yet complete    
 
 * 0.31 
     - SAML response deserializes 
@@ -32,11 +36,10 @@ Roadmap:
 * 0.1-0.49 
     - development versions lacking core features
 
-* 0.5 
+* 0.50 
     - first important milestone, client can authenticate agaist Microsoft ADFS using 
         * REDIRECT Request binding
         * POST Response binding
-    - fit existing `System.IdentityModel` infrastructure, including `IssuerNameRegistry` and `X509CerfificateValidator`
 
 * 0.75 
 
