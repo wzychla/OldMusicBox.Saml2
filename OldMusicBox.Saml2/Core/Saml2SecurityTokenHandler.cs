@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OldMusicBox.Saml2.Validation;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IdentityModel.Tokens;
@@ -55,36 +56,6 @@ namespace OldMusicBox.Saml2
             }
         }
 
-        /// <summary>
-        /// Checks token against the audience restriction
-        /// </summary>
-        protected virtual void ValidateTokenAudienceRestriction(Saml2SecurityToken token)
-        {
-            #warning Implementation missing
-        }
-
-        /// <summary>
-        /// Checks if token issue/expiration dates are valid
-        /// </summary>
-        protected virtual void ValidateTokenDates( Saml2SecurityToken token )
-        {
-            #warning Implementation missing
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="token"></param>
-        protected virtual void ValidateTokenSignature( Saml2SecurityToken token )
-        {
-            #warning Implementation missing
-        }
-
-        protected virtual void ValidateTokenCertificate( Saml2SecurityToken token )
-        {
-            #warning Implementation missing
-        }
-
         #endregion
 
         #region Claims identity creation
@@ -135,6 +106,7 @@ namespace OldMusicBox.Saml2
         /// </summary>
         /// <remarks>
         /// Claim validation consists in several steps:
+        /// * status code validation
         /// * replayed token detection
         /// * audience restriction checking
         /// * expiration checking
@@ -159,10 +131,19 @@ namespace OldMusicBox.Saml2
             // validation
             this.DetectReplayedToken(token);
 
-            this.ValidateTokenAudienceRestriction(saml2Token);
-            this.ValidateTokenDates(saml2Token);
-            this.ValidateTokenSignature(saml2Token);
-            this.ValidateTokenCertificate(saml2Token);
+            var validators = new ISaml2TokenValidator[]
+            {
+                new StatusCodeValidator(),
+                new AudienceRestrictionValidator(),
+                new TimeWindowValidator(),
+                new SignatureValidator(),
+                new CertifcateValidator(),
+            };
+
+            foreach ( var validator in validators )
+            {
+                validator.Validate(saml2Token, this.Configuration);
+            }
 
             // if this is reached, token is validated correctly
 

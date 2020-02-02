@@ -71,7 +71,7 @@ namespace OldMusicBox.Saml2.DemoClient.Controllers
 
                 var tokenHandler = new Saml2SecurityTokenHandler()
                 {
-                    Configuration = configuration
+                    Configuration = configuration                    
                 };
                 var identity     = tokenHandler.ValidateToken(securityToken);
 

@@ -33,6 +33,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.IdentityModel" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -46,6 +47,7 @@
     <Compile Include="Constants\Elements.cs" />
     <Compile Include="Constants\Namespaces.cs" />
     <Compile Include="Constants\ProtocolVersion.cs" />
+    <Compile Include="Constants\StatusCodes.cs" />
     <Compile Include="Core\Saml2Exception.cs" />
     <Compile Include="Core\Saml2SecurityToken.cs" />
     <Compile Include="Core\Saml2SecurityTokenHandler.cs" />
@@ -68,13 +70,18 @@
     <Compile Include="Serialization\ISerializableMessage.cs" />
     <Compile Include="Signature\ISignableMessage.cs" />
     <Compile Include="Signature\SignatureAlgorithm.cs" />
+    <Compile Include="Validation\AudienceRestrictionValidator.cs" />
+    <Compile Include="Validation\CertifcateValidator.cs" />
+    <Compile Include="Validation\ISaml2TokenValidator.cs" />
+    <Compile Include="Validation\SignatureValidator.cs" />
+    <Compile Include="Validation\StatusCodeValidator.cs" />
+    <Compile Include="Validation\TimeWindowValidator.cs" />
+    <Compile Include="Validation\ValidationException.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\AuthnRequestPostBinding.html" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Validation\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

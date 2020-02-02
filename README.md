@@ -8,9 +8,14 @@ Features:
 * target classic .NET Framework, make it .NET Core compatible soon
 * provide both client and server side implementation of Saml2
 
-Current Version: 0.40
+Current Version: 0.41
 
 Version History:
+
+* 0.41
+
+    - Token's signature is validated
+    - Signature's certificate is validated against the Issuer name registry
 
 * 0.40
 

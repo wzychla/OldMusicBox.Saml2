@@ -1,7 +1,9 @@
 ﻿using OldMusicBox.Saml2.Constants;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -39,6 +41,21 @@ namespace OldMusicBox.Saml2.Response
 
         [XmlAttribute("Version")]
         public string Version { get; set; }
+
+        public X509SecurityToken GetX509SecurityToken()
+        {
+            if ( this.Signature != null &&
+                 this.Signature.KeyInfo != null &&
+                 this.Signature.KeyInfo.X509Data != null &&
+                 this.Signature.KeyInfo.X509Data.Certificate != null 
+                )
+            {
+                var certificateBytes = Convert.FromBase64String(this.Signature.KeyInfo.X509Data.Certificate.Text);
+                return new X509SecurityToken(new X509Certificate2(certificateBytes));
+            }
+
+            return null;
+        }
     }
 
     public class Attribute

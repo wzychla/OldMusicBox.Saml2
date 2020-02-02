@@ -41,10 +41,11 @@ namespace OldMusicBox.Saml2
 
             try
             {
-                var xmltoken = new XmlDocument();
-                xmltoken.LoadXml(response);
+                this.RawResponse = new XmlDocument();
+                this.RawResponse.PreserveWhitespace = true;
+                this.RawResponse.LoadXml(response);
 
-                var responseNode = xmltoken.SelectSingleNode("samlp:Response", Namespaces.DeserializerNamespaces);
+                var responseNode = this.RawResponse.SelectSingleNode("samlp:Response", Namespaces.DeserializerNamespaces);
                 if ( responseNode == null )
                 {
                     throw new Saml2Exception("The samlp:Response node not found");
@@ -66,7 +67,13 @@ namespace OldMusicBox.Saml2
         }
 
         /// <summary>
+        /// Raw XML data
+        /// </summary>
+        public XmlDocument RawResponse { get; private set; }
+
+        /// <summary>
         /// Token is always built from the IdP response
+        /// (parsed from RawResponse)
         /// </summary>
         public ResponseModel Response { get; private set; }
 
