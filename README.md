@@ -8,9 +8,14 @@ Features:
 * target classic .NET Framework, make it .NET Core compatible soon
 * provide both client and server side implementation of Saml2
 
-Current Version: 0.41
+Current Version: 0.50
 
 Version History:
+
+* 0.50
+
+    - first milestone reached. The client can succesfully authenticate
+    using POST/REDIRECT request binding and POST response binding
 
 * 0.41
 
@@ -43,11 +48,15 @@ Roadmap:
 
 * 0.50 
     - first important milestone, client can authenticate agaist Microsoft ADFS using 
-        * REDIRECT Request binding
+        * POST/REDIRECT Request binding
         * POST Response binding
 
-* 0.75 
 
+* 0.60
+    - support ARTIFACT response binding
+
+* 0.75 
+    - support REDIRECT response binding
     - support AuthnRequest signing
 
 * 1.0 
@@ -61,3 +70,4 @@ Roadmap:
     * server side next so that it's possible to create the Saml2 Identity Provider compatible with existing clients (e.g. JIRA)
     * support at least REDIRECT and POST server's bindings
     * Assertion encryption
+    * support .Net Core
