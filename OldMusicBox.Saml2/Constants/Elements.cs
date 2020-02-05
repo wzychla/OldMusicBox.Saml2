@@ -11,6 +11,7 @@ namespace OldMusicBox.Saml2.Constants
     /// </summary>
     public class Elements
     {
+        public const string SAMLARTIFACT = "SAMLArt";
         public const string SAMLREQUEST  = "SAMLRequest";
         public const string SAMLRESPONSE = "SAMLResponse";
     }

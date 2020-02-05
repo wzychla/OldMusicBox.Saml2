@@ -12,6 +12,10 @@ namespace OldMusicBox.Saml2.Constants
     public class Binding
     {
         /// <summary>
+        /// Artifact binding
+        /// </summary>
+        public const string ARTIFACT = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact";
+        /// <summary>
         /// REDIRECT binding
         /// </summary>
         public const string REDIRECT = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect";

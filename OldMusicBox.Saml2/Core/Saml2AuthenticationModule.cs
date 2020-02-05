@@ -40,18 +40,18 @@ namespace OldMusicBox.Saml2
             }
 
             return
-                (request.HttpMethod == "GET"  && request.QueryString[Elements.SAMLRESPONSE] != null) ||
+                (request.HttpMethod == "GET" && request.QueryString[Elements.SAMLARTIFACT] != null) ||
+                (request.HttpMethod == "GET" && request.QueryString[Elements.SAMLRESPONSE] != null) ||
                 (request.HttpMethod == "POST" && request.Form[Elements.SAMLRESPONSE] != null);
         }
 
         /// <summary>
         /// Obtains the token from the Request (which is an IdP's response)
         /// </summary>
-        public virtual Saml2SecurityToken GetSecurityToken( HttpRequestBase request )
+        public virtual Saml2SecurityToken GetPostSecurityToken( HttpRequestBase request )
         {
             var rawMessage = new RawMessageFactory().FromIdpResponse(request);
-            if ( rawMessage == null ||
-                 string.IsNullOrEmpty( rawMessage.Payload )
+            if ( rawMessage == null || string.IsNullOrEmpty( rawMessage.Payload )
                 )
             {
                 throw new ArgumentException("IdP response doesn't containt the SAML2 Response");
@@ -59,8 +59,18 @@ namespace OldMusicBox.Saml2
 
             // log
             new LoggerFactory().For(this).Debug(Event.RawAuthnRequest, rawMessage.Payload);
-
             return new Saml2SecurityToken(rawMessage.Payload);
+        }
+
+        /// <summary>
+        /// Obtains the token from the additional request made with the artifact returned by the IdP
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public virtual Saml2SecurityToken GetArtifactSecurityToken(HttpRequestBase request)
+        {
+            #warning TODO!
+            return null;
         }
     }
 }

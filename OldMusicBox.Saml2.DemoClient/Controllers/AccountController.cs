@@ -24,41 +24,62 @@ namespace OldMusicBox.Saml2.DemoClient.Controllers
         public ActionResult Logon()
         {
             var saml2    = new Saml2AuthenticationModule();
-            var request = this.Request;
+
+            // parameters
+            var assertionConsumerServiceURL = ConfigurationManager.AppSettings["AssertionConsumerServiceURL"];
+            var assertionIssuer             = ConfigurationManager.AppSettings["AssertionIssuer"];
+            var identityProvider            = ConfigurationManager.AppSettings["IdentityProvider"];
+            var artifactResolution          = ConfigurationManager.AppSettings["ArtifactResolution"];
+
+            var requestBinding  = Binding.POST;
+            var responseBinding = Binding.ARTIFACT;
 
             // check if this is 
-            if ( !saml2.IsSignInResponse( request ) )
+            if (!saml2.IsSignInResponse(this.Request))
             {
                 // AuthnRequest factory
                 var authnRequestFactory = new AuthnRequestFactory();
 
-                // parameters
-                var assertionConsumerServiceURL = ConfigurationManager.AppSettings["AssertionConsumerServiceURL"];
-                var assertionIssuer             = ConfigurationManager.AppSettings["AssertionIssuer"];
-                var identityProvider            = ConfigurationManager.AppSettings["IdentityProvider"];
-
                 authnRequestFactory.AssertionConsumerServiceURL = assertionConsumerServiceURL;
-                authnRequestFactory.AssertionIssuer             = assertionIssuer;
-                authnRequestFactory.Destination                 = identityProvider;
+                authnRequestFactory.AssertionIssuer = assertionIssuer;
+                authnRequestFactory.Destination = identityProvider;
 
-                authnRequestFactory.RequestBinding  = Binding.POST;
-                authnRequestFactory.ResponseBinding = Binding.POST;
+                authnRequestFactory.RequestBinding = requestBinding;
+                authnRequestFactory.ResponseBinding = responseBinding;
 
                 var authnRequestContent = authnRequestFactory.CreateBindingContent();
-                switch ( authnRequestFactory.RequestBinding )
+                switch (authnRequestFactory.RequestBinding)
                 {
                     case Constants.Binding.REDIRECT:
                         return Redirect(authnRequestContent);
                     case Constants.Binding.POST:
                         return Content(authnRequestContent);
                     default:
-                        throw new ArgumentException(string.Format("The {0} request binding is not supported", authnRequestFactory.RequestBinding ) );
+                        throw new ArgumentException(string.Format("The {0} request binding is not supported", authnRequestFactory.RequestBinding));
                 }
             }
             else
             {
                 // the token is created from the IdP's response
-                var securityToken = saml2.GetSecurityToken(request);
+                Saml2SecurityToken securityToken = null;
+
+                switch (responseBinding)
+                {
+                    case Binding.ARTIFACT:
+                        securityToken = saml2.GetArtifactSecurityToken(this.Request);
+                        break;
+                    case Binding.POST:
+                        securityToken = saml2.GetPostSecurityToken(this.Request);
+                        break;
+                    default:
+                        throw new NotSupportedException(string.Format("The {0} response binding is not yet supported", responseBinding));
+                }
+
+                // fail if there is no token
+                if ( securityToken == null )
+                {
+                    throw new ArgumentNullException("No security token found in the response accoding to the Response Binding configuration");
+                }
 
                 // the token will be validated
                 var configuration = new SecurityTokenHandlerConfiguration
@@ -90,8 +111,15 @@ namespace OldMusicBox.Saml2.DemoClient.Controllers
             }
         }
 
-        public ActionResult Logoff()
+        public ActionResult Logout()
         {
+            return new EmptyResult();
+        }
+
+        public ActionResult LocalLogout()
+        {
+            FormsAuthentication.SignOut();
+
             return new EmptyResult();
         }
     }
