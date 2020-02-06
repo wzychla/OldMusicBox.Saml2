@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace OldMusicBox.Saml2.Response
+namespace OldMusicBox.Saml2.Model.Response
 {
     /// <summary>
     /// XmlDsig basic model

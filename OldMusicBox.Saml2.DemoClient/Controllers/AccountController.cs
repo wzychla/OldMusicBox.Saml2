@@ -1,5 +1,5 @@
 ﻿using OldMusicBox.Saml2.Constants;
-using OldMusicBox.Saml2.Request;
+using OldMusicBox.Saml2.Model.Request;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -32,7 +32,7 @@ namespace OldMusicBox.Saml2.DemoClient.Controllers
             var artifactResolution          = ConfigurationManager.AppSettings["ArtifactResolution"];
 
             var requestBinding  = Binding.POST;
-            var responseBinding = Binding.ARTIFACT;
+            var responseBinding = Binding.POST;
 
             // check if this is 
             if (!saml2.IsSignInResponse(this.Request))
@@ -41,19 +41,22 @@ namespace OldMusicBox.Saml2.DemoClient.Controllers
                 var authnRequestFactory = new AuthnRequestFactory();
 
                 authnRequestFactory.AssertionConsumerServiceURL = assertionConsumerServiceURL;
-                authnRequestFactory.AssertionIssuer = assertionIssuer;
-                authnRequestFactory.Destination = identityProvider;
+                authnRequestFactory.AssertionIssuer             = assertionIssuer;
+                authnRequestFactory.Destination                 = identityProvider;
 
-                authnRequestFactory.RequestBinding = requestBinding;
+                // these two are optional, necessary only if the IdP expects the request is signed
+                authnRequestFactory.X509SignatureCertificate = new ClientCertificateProvider().GetClientCertificate();
+                authnRequestFactory.X509IncludeKeyInfo       = true;
+
+                authnRequestFactory.RequestBinding  = requestBinding;
                 authnRequestFactory.ResponseBinding = responseBinding;
 
-                var authnRequestContent = authnRequestFactory.CreateBindingContent();
                 switch (authnRequestFactory.RequestBinding)
                 {
                     case Constants.Binding.REDIRECT:
-                        return Redirect(authnRequestContent);
+                        return Redirect(authnRequestFactory.CreateRedirectBindingContent());
                     case Constants.Binding.POST:
-                        return Content(authnRequestContent);
+                        return Content(authnRequestFactory.CreatePostBindingContent());
                     default:
                         throw new ArgumentException(string.Format("The {0} request binding is not supported", authnRequestFactory.RequestBinding));
                 }
@@ -86,7 +89,7 @@ namespace OldMusicBox.Saml2.DemoClient.Controllers
                 {
                     CertificateValidator = X509CertificateValidator.None,
                     IssuerNameRegistry   = new DemoClientIssuerNameRegistry(),
-                    DetectReplayedTokens = false
+                    DetectReplayedTokens = false                    
                 };
                 configuration.AudienceRestriction.AudienceMode = AudienceUriMode.Never;
 
@@ -120,7 +123,7 @@ namespace OldMusicBox.Saml2.DemoClient.Controllers
         {
             FormsAuthentication.SignOut();
 
-            return new EmptyResult();
+            return Redirect("/");
         }
     }
 }

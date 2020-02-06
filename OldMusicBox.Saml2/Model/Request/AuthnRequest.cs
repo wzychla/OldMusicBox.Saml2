@@ -8,27 +8,32 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace OldMusicBox.Saml2.Request
+namespace OldMusicBox.Saml2.Model.Request
 {
     /// <summary>
     /// SAML2 AuthnRequest model
     /// </summary>
     [XmlRoot("AuthnRequest", Namespace=Namespaces.PROTOCOL)]
-    public class AuthnRequestModel : 
-        ISerializableMessage,
+    public class AuthnRequest : 
         ISignableMessage
     {
+        [XmlAttribute("ID")]
+        public string ID { get; set; }
+
+        [XmlAttribute("Version")]
+        public string Version { get; set; }
+
+        [XmlAttribute("IssueInstant")]
+        public DateTime IssueInstant { get; set; }
+
         [XmlAttribute("AssertionConsumerServiceURL")]
         public string AssertionConsumerServiceURL { get; set; }
 
         [XmlAttribute("Destination")]
         public string Destination { get; set; }
 
-        [XmlAttribute("ID")]
-        public string ID { get; set; }
-
-        [XmlAttribute("IssueInstant")]
-        public DateTime IssueInstant { get; set; }
+        [XmlAttribute("ProtocolBinding")]
+        public string ProtocolBinding { get; set; }
 
         [XmlElement("Issuer", Namespace = Namespaces.ASSERTION )]
         public string Issuer { get; set; }
@@ -36,14 +41,8 @@ namespace OldMusicBox.Saml2.Request
         [XmlElement("NameIDPolicy", Namespace = Namespaces.PROTOCOL)]
         public NameIDPolicy NameIDPolicy { get; set; }
 
-        [XmlAttribute("ProtocolBinding")]
-        public string ProtocolBinding { get; set; }
-
         [XmlElement("RequestedAuthnContext", Namespace = Namespaces.PROTOCOL )]
         public RequestAuthContext RequestedAuthnContext { get; set; }
-
-        [XmlAttribute("Version")]
-        public string Version { get; set; }
 
     }
 

@@ -96,6 +96,7 @@
   <ItemGroup>
     <Compile Include="App_Start\DemoClientIssuerNameRegistry.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="ClientCertificate\ClientCertificateProvider.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
@@ -109,6 +110,9 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="ClientCertificate\SAML2DemoClient.p12">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

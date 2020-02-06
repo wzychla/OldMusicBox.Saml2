@@ -1,6 +1,6 @@
 ﻿using OldMusicBox.Saml2.Constants;
 using OldMusicBox.Saml2.Core;
-using OldMusicBox.Saml2.Response;
+using OldMusicBox.Saml2.Model.Response;
 using OldMusicBox.Saml2.Serialization;
 using System;
 using System.Collections.Generic;
@@ -18,7 +18,9 @@ namespace OldMusicBox.Saml2
     /// </summary>
     public class Saml2SecurityToken : SecurityToken
     {
-        public Saml2SecurityToken() { }
+        public Saml2SecurityToken()
+        {
+        }
 
         public Saml2SecurityToken(string response) :
             this( response, new DefaultMessageSerializer())
@@ -52,7 +54,7 @@ namespace OldMusicBox.Saml2
                 }
 
                 this.Response = 
-                    serializer.Deserialize<ResponseModel>(
+                    serializer.Deserialize<Response>(
                         responseNode.OuterXml,
                         new MessageDeserializationParameters()
                         {
@@ -75,7 +77,7 @@ namespace OldMusicBox.Saml2
         /// Token is always built from the IdP response
         /// (parsed from RawResponse)
         /// </summary>
-        public ResponseModel Response { get; private set; }
+        public Response Response { get; private set; }
 
         public override string Id
         {

@@ -2,6 +2,7 @@
 using OldMusicBox.Saml2.Logging;
 using OldMusicBox.Saml2.Resources;
 using OldMusicBox.Saml2.Serialization;
+using OldMusicBox.Saml2.Signature;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,35 +11,39 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace OldMusicBox.Saml2.Request
+namespace OldMusicBox.Saml2.Model.Request
 {
     /// <summary>
     /// SAML2 authentication request factory
     /// </summary>
     public class AuthnRequestFactory
     {
-        public AuthnRequestFactory() : this(new DefaultMessageSerializer()) { }
-
-        public AuthnRequestFactory(IMessageSerializer messageSerializer)
+        public AuthnRequestFactory() 
         {
-            if ( messageSerializer == null )
-            {
-                throw new ArgumentNullException("messageSerializer", "The message serializer cannot be null");
-            }
+            this.AuthnRequest           = new AuthnRequest();
+            this.X509SignatureAlgorithm = SignatureAlgorithm.SHA256;
 
-            this.AuthnRequest      = new AuthnRequestModel();
-            this.MessageSerializer = messageSerializer;
+            this.MessageSerializer = new DefaultMessageSerializer();
+            this.MessageSigner     = new DefaultMessageSigner(this.MessageSerializer);
 
-            this.AuthnRequest.ID           = string.Format("id_{0}", Guid.NewGuid());
+            this.AuthnRequest.ID = string.Format("id_{0}", Guid.NewGuid());
             this.AuthnRequest.IssueInstant = DateTime.UtcNow;
-            this.AuthnRequest.Version      = ProtocolVersion._20;
+            this.AuthnRequest.Version = ProtocolVersion._20;
 
-            this.Encoding                   = Encoding.UTF8;
+            this.Encoding = Encoding.UTF8;
         }
 
-        public AuthnRequestModel AuthnRequest { get; private set; }
+        public AuthnRequest AuthnRequest { get; private set; }
 
+        /// <summary>
+        /// Message serializer
+        /// </summary>
         public IMessageSerializer MessageSerializer { get; set; }
+
+        /// <summary>
+        /// Message signer
+        /// </summary>
+        public IMessageSigner MessageSigner { get; set; }
 
         /// <summary>
         /// Assertion Consumer Service URL        
@@ -125,56 +130,35 @@ namespace OldMusicBox.Saml2.Request
         /// <summary>
         /// Certificate used to create a signature
         /// </summary>
-        public X509Certificate2 SignatureCertificate { get; set; }
+        public X509Certificate2 X509SignatureCertificate { get; set; }
 
+
+        public SignatureAlgorithm X509SignatureAlgorithm { get; set; }
         /// <summary>
         /// Should the request contain the full X509KeyInfo section in the signature
         /// </summary>
-        public bool IncludeX509KeyInfo { get; set; }
-
-        /// <summary>
-        /// The main method to return the AuthnRequest
-        /// </summary>
-        /// <remarks>
-        /// Depending on the binding the result can either be
-        /// * a query string the client should redirect to (REDIRECT binding)
-        /// * a web page containing a form that POSTs the token to the IdP (POST binding)
-        /// </remarks>
-        public virtual string CreateBindingContent()
-        {
-            if ( string.IsNullOrEmpty( this.RequestBinding ) )
-            {
-                throw new ArgumentNullException("RequestBinding", "Request Binding cannot be null");
-            }
-            if (string.IsNullOrEmpty( this.ResponseBinding ) )
-            {
-                throw new ArgumentNullException("ResponseBinding", "Response Binding cannot be null");
-            }
-            if ( string.IsNullOrEmpty( this.Destination ))
-            {
-                throw new ArgumentNullException("Destination", "Response Binding cannot be null");
-            }
-
-            switch ( this.RequestBinding )
-            {
-                case Binding.POST:
-                    return this.CreatePostBindingContent();
-                case Binding.REDIRECT:
-                    return this.CreateRedirectBindingContent();                
-                default:
-                    throw new ArgumentException(string.Format("Request binding {0} is not yet supported", this.RequestBinding));
-            }
-        }
-
-        #region Implementation
+        public bool X509IncludeKeyInfo { get; set; }
 
         #region Post binding
 
         /// <summary>
         /// Post binding should return the AuthnRequest in a web page that posts to the identity provider
         /// </summary>
-        protected virtual string CreatePostBindingContent()
+        public virtual string CreatePostBindingContent()
         {
+            if (string.IsNullOrEmpty(this.RequestBinding))
+            {
+                throw new ArgumentNullException("RequestBinding", "Request Binding cannot be null");
+            }
+            if (string.IsNullOrEmpty(this.ResponseBinding))
+            {
+                throw new ArgumentNullException("ResponseBinding", "Response Binding cannot be null");
+            }
+            if (string.IsNullOrEmpty(this.Destination))
+            {
+                throw new ArgumentNullException("Destination", "Response Binding cannot be null");
+            }
+
             string contentPage = new ResourceFactory().Create(ResourceFactory.EmbeddedResource.AuthnRequestPostBinding);
 
             contentPage = contentPage.Replace("((Destination))", this.Destination);
@@ -187,6 +171,11 @@ namespace OldMusicBox.Saml2.Request
             return contentPage;
         }
 
+        /// <summary>
+        /// Serialize, encode, sign, whatever necessary to create
+        /// a POST binding token that is POSTed to the IdP
+        /// </summary>
+        /// <returns></returns>
         protected virtual string CreatePostBindingToken()
         {
             return this.MessageSerializer.Serialize(
@@ -205,8 +194,21 @@ namespace OldMusicBox.Saml2.Request
         /// <summary>
         /// Redirect binding should return a redirect uri that conforms to Saml2 specs
         /// </summary>
-        protected virtual string CreateRedirectBindingContent()
+        public virtual string CreateRedirectBindingContent()
         {
+            if (string.IsNullOrEmpty(this.RequestBinding))
+            {
+                throw new ArgumentNullException("RequestBinding", "Request Binding cannot be null");
+            }
+            if (string.IsNullOrEmpty(this.ResponseBinding))
+            {
+                throw new ArgumentNullException("ResponseBinding", "Response Binding cannot be null");
+            }
+            if (string.IsNullOrEmpty(this.Destination))
+            {
+                throw new ArgumentNullException("Destination", "Response Binding cannot be null");
+            }
+
             var uri         = new UriBuilder(this.Destination);
             var queryString = HttpUtility.ParseQueryString(string.Empty);
 
@@ -230,8 +232,6 @@ namespace OldMusicBox.Saml2.Request
             // return the uri
             return uri.ToString();
         } 
-
-        #endregion
 
         #endregion
     }

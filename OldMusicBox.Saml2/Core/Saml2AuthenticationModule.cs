@@ -1,6 +1,8 @@
 ﻿using OldMusicBox.Saml2.Constants;
 using OldMusicBox.Saml2.Logging;
 using OldMusicBox.Saml2.Message;
+using OldMusicBox.Saml2.Model.Artifact;
+using OldMusicBox.Saml2.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +29,13 @@ namespace OldMusicBox.Saml2
     /// </remarks>
     public class Saml2AuthenticationModule 
     {
+        public Saml2AuthenticationModule()
+        {
+            this.MessageSerializer = new DefaultMessageSerializer();
+        }
+
+        public IMessageSerializer MessageSerializer { get; set; }
+
         /// <summary>
         /// The SAML2 response (AuthnResponse) is passed:
         /// * in the querystring - the REDIRECT binding
@@ -59,7 +68,7 @@ namespace OldMusicBox.Saml2
 
             // log
             new LoggerFactory().For(this).Debug(Event.RawAuthnRequest, rawMessage.Payload);
-            return new Saml2SecurityToken(rawMessage.Payload);
+            return new Saml2SecurityToken(rawMessage.Payload, this.MessageSerializer);
         }
 
         /// <summary>
@@ -69,7 +78,15 @@ namespace OldMusicBox.Saml2
         /// <returns></returns>
         public virtual Saml2SecurityToken GetArtifactSecurityToken(HttpRequestBase request)
         {
+            var samlArt = request.QueryString[Elements.SAMLARTIFACT];
+            if ( string.IsNullOrEmpty( samlArt ) )
+            {
+                throw new ArgumentException("IdP response doesn't contain the SAML artifact");
+            }
+
+            var artifactResolve = new ArtifactResolveFactory().CreateArtifactResolve(samlArt);
             #warning TODO!
+
             return null;
         }
     }

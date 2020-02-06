@@ -8,9 +8,13 @@ Features:
 * target classic .NET Framework, make it .NET Core compatible soon
 * provide both client and server side implementation of Saml2
 
-Current Version: 0.51
+Current Version: 0.52
 
 Version History:
+
+* 0.51
+
+	- partial work on request signing. This ultimately leads to the ARTIFACT response binding where the ArtifactResolve has to be signed.
 
 * 0.51
 
@@ -55,7 +59,6 @@ Roadmap:
         * POST/REDIRECT Request binding
         * POST Response binding
 
-
 * 0.60
     - support ARTIFACT response binding
 
@@ -70,6 +73,7 @@ Roadmap:
 
 * later on
 
+    * support ECDSA certificates (by switching to BouncyCastle)
     * client/server metadata
     * server side next so that it's possible to create the Saml2 Identity Provider compatible with existing clients (e.g. JIRA)
     * support at least REDIRECT and POST server's bindings
