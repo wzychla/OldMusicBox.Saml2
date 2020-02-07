@@ -8,9 +8,14 @@ Features:
 * target classic .NET Framework, make it .NET Core compatible soon
 * provide both client and server side implementation of Saml2
 
-Current Version: 0.52
+Current Version: 0.53
 
 Version History:
+
+* 0.53
+
+    - AuthnRequest is correctly signable, assuming the signing 
+    certificate is provided
 
 * 0.51
 

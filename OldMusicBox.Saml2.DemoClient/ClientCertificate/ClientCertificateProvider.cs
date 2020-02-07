@@ -27,7 +27,7 @@ namespace OldMusicBox.Saml2.DemoClient
                     byte[] bytes = new byte[fs.Length];
                     fs.Read(bytes, 0, bytes.Length);
 
-                    _certificate = new X509Certificate2(bytes, "SAML2");
+                    _certificate = new X509Certificate2(bytes, "SAML2", X509KeyStorageFlags.Exportable);
                 }
             }
 

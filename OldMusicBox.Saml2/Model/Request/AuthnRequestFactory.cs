@@ -178,13 +178,22 @@ namespace OldMusicBox.Saml2.Model.Request
         /// <returns></returns>
         protected virtual string CreatePostBindingToken()
         {
-            return this.MessageSerializer.Serialize(
-                this.AuthnRequest,
-                new MessageSerializationParameters()
-                {
-                    ShouldBase64Encode = true,
-                    ShouldDeflate = false
-                });
+            // sign the request?
+            if (this.X509SignatureCertificate == null)
+            {
+                return this.MessageSerializer.Serialize(
+                    this.AuthnRequest,
+                    new MessageSerializationParameters()
+                    {
+                        ShouldBase64Encode = true,
+                        ShouldDeflate = false
+                    });
+            }
+            else
+            {
+                var signedAuthnRequest = this.MessageSigner.Sign(this.AuthnRequest, this.X509SignatureCertificate, this.X509IncludeKeyInfo, this.X509SignatureAlgorithm);
+                return Convert.ToBase64String(signedAuthnRequest);
+            }
         }
 
         #endregion

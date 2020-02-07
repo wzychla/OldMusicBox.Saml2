@@ -37,5 +37,7 @@ namespace OldMusicBox.Saml2.Logging
         PostBindingPage,
         // whatever comes as SAMLResponse
         RawResponse,
+        // a signed message
+        SignedMessage,
     }
 }

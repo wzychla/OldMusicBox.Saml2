@@ -60,6 +60,7 @@
     <Compile Include="Model\Artifact\ArtifactResolve.cs" />
     <Compile Include="Model\Artifact\ArtifactResolveFactory.cs" />
     <Compile Include="Model\Artifact\ArtifactResolveWebClient.cs" />
+    <Compile Include="Other\X509CertificateExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Model\Request\AuthnRequestFactory.cs" />
     <Compile Include="Model\Request\AuthnRequest.cs" />
