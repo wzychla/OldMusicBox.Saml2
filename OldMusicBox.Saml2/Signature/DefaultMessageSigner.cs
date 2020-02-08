@@ -1,4 +1,5 @@
 ﻿using OldMusicBox.Saml2.Logging;
+using OldMusicBox.Saml2.Model;
 using OldMusicBox.Saml2.Serialization;
 using System;
 using System.Collections.Generic;
@@ -30,13 +31,17 @@ namespace OldMusicBox.Saml2.Signature
         private IMessageSerializer messageSerializer { get; set; }
         private Encoding encoding { get; set; }
 
-        public byte[] Sign(ISignableMessage message, X509Certificate2 x509Certificate, bool x509IncludeKeyInfo, SignatureAlgorithm x509SignatureAlgorithm)
+        public byte[] Sign(
+            ISignableMessage message, 
+            X509Configuration x509Configuration)
         {
             if (message == null)
             {
                 throw new ArgumentNullException("message");
             }
-            if ( x509Certificate == null )
+            if ( x509Configuration == null ||
+                 x509Configuration.SignatureCertificate == null 
+                )
             {
                 throw new ArgumentNullException("certificate");
             }
@@ -64,24 +69,24 @@ namespace OldMusicBox.Saml2.Signature
             // some more spells depending on SHA1 vs SHA256
             var signed                               = new SignedXml(xml);
             signed.SignedInfo.CanonicalizationMethod = SignedXml.XmlDsigExcC14NTransformUrl;
-            switch ( x509SignatureAlgorithm )
+            switch ( x509Configuration.SignatureAlgorithm )
             {
                 case SignatureAlgorithm.SHA1:
-                    signed.SigningKey                 = x509Certificate.PrivateKey;
+                    signed.SigningKey                 = x509Configuration.SignatureCertificate.PrivateKey;
                     signed.SignedInfo.SignatureMethod = SignedXml.XmlDsigRSASHA1Url;
                     reference.DigestMethod            = SignedXml.XmlDsigSHA1Url;
                     break;
                 case SignatureAlgorithm.SHA256:
-                    signed.SigningKey                 = x509Certificate.ToSha256PrivateKey();
+                    signed.SigningKey                 = x509Configuration.SignatureCertificate.ToSha256PrivateKey();
                     signed.SignedInfo.SignatureMethod = SignedXml.XmlDsigRSASHA256Url;
                     reference.DigestMethod            = SignedXml.XmlDsigSHA256Url;
                     break;
             }
 
-            if ( x509IncludeKeyInfo )
+            if ( x509Configuration.IncludeKeyInfo )
             {
-                var key     = new KeyInfo();
-                var keyData = new KeyInfoX509Data(x509Certificate);
+                var key     = new System.Security.Cryptography.Xml.KeyInfo();
+                var keyData = new KeyInfoX509Data(x509Configuration.SignatureCertificate);
                 key.AddClause(keyData);
                 signed.KeyInfo = key;
             }

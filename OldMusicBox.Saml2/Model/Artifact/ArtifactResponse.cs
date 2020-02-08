@@ -1,19 +1,20 @@
 ﻿using OldMusicBox.Saml2.Constants;
-using OldMusicBox.Saml2.Signature;
+using OldMusicBox.Saml2.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace OldMusicBox.Saml2.Model
-{
+{ 
     /// <summary>
-    /// ArtifactResolve request model
+    /// Artifact response
     /// </summary>
-    [XmlRoot("ArtifactResolve", Namespace = Namespaces.PROTOCOL)]
-    public class ArtifactResolve : ISignableMessage
+    [XmlRoot("ArtifactResponse", Namespace = Namespaces.PROTOCOL)]
+    public class ArtifactResponse : ISerializableMessage
     {
         [XmlAttribute("ID")]
         public string ID { get; set; }
@@ -24,10 +25,19 @@ namespace OldMusicBox.Saml2.Model
         [XmlAttribute("IssueInstant")]
         public DateTime IssueInstant { get; set; }
 
+        [XmlAttribute("Consent")]
+        public string Consent { get; set; }
+
+        [XmlAttribute("InResponseTo")]
+        public string InResponseTo { get; set; }
+
         [XmlElement("Issuer", Namespace = Namespaces.ASSERTION)]
         public string Issuer { get; set; }
 
-        [XmlElement("Artifact", Namespace = Namespaces.PROTOCOL)]
-        public string Artifact { get; set; }
+        [XmlElement("Status", Namespace = Namespaces.PROTOCOL)]
+        public Status Status { get; set; }
+
+        [XmlAnyElement("Response", Namespace = Namespaces.PROTOCOL)]
+        public XmlElement Response { get; set; }
     }
 }

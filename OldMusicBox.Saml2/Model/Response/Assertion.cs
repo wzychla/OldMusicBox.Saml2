@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace OldMusicBox.Saml2.Model.Response
+namespace OldMusicBox.Saml2.Model
 {
     /// <summary>
     /// Saml2 Assertion basic model

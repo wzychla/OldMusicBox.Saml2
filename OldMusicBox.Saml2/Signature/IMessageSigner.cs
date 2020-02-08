@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OldMusicBox.Saml2.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -14,9 +15,7 @@ namespace OldMusicBox.Saml2.Signature
     {
         byte[] Sign(
             ISignableMessage   message,
-            X509Certificate2   x509Certificate,
-            bool               x509IncludeKeyInfo,
-            SignatureAlgorithm x509SignatureAlgorithm
+            X509Configuration  x509Configuration
             );
     }
 }

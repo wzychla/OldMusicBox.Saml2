@@ -1,6 +1,6 @@
 ﻿using OldMusicBox.Saml2.Constants;
 using OldMusicBox.Saml2.Core;
-using OldMusicBox.Saml2.Model.Response;
+using OldMusicBox.Saml2.Model;
 using OldMusicBox.Saml2.Serialization;
 using System;
 using System.Collections.Generic;

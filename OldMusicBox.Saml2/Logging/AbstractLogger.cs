@@ -25,19 +25,4 @@ namespace OldMusicBox.Saml2.Logging
         }
         public abstract void Error(string Message, Exception ex);
     }
-
-    /// <summary>
-    /// Low lever events/objects that should be trackable
-    /// </summary>
-    public enum Event
-    {
-        // raw authnrequest token
-        RawAuthnRequest,
-        // complete post binding page
-        PostBindingPage,
-        // whatever comes as SAMLResponse
-        RawResponse,
-        // a signed message
-        SignedMessage,
-    }
 }

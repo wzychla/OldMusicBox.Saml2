@@ -3,23 +3,105 @@
 The goal of this project is to provide an independent .NET Saml2 Client/Server Library. The implementation follows the 
 [official specification](http://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf).
 
-Features:
+## Features:
 
 * target classic .NET Framework, make it .NET Core compatible soon
 * provide both client and server side implementation of Saml2
 
-Current Version: 0.53
+## Current Version
 
-Version History:
+Current version is **0.60**. Please refer to the change list and the road map below.
+
+## Client interface example
+
+A simplest use case that assumes the POST request/response binding is used:
+
+```C#
+public ActionResult Logon()
+{
+    var saml2    = new Saml2AuthenticationModule();
+
+    // parameters
+    var assertionConsumerServiceURL = "https://localhost:44307/account/logon";
+    var assertionIssuer             = "https://localhost:44307";
+    var identityProvider            = "https://adfs.my.company/adfs/ls/";
+
+    var requestBinding  = Binding.POST;
+    var responseBinding = Binding.POST;
+
+    // check if this is 
+    if (!saml2.IsSignInResponse(this.Request))
+    {
+        // AuthnRequest factory
+        var authnRequestFactory = new AuthnRequestFactory();
+
+        authnRequestFactory.AssertionConsumerServiceURL = assertionConsumerServiceURL;
+        authnRequestFactory.AssertionIssuer             = assertionIssuer;
+        authnRequestFactory.Destination                 = identityProvider;
+
+        authnRequestFactory.RequestBinding  = requestBinding;
+        authnRequestFactory.ResponseBinding = responseBinding;
+
+        // other options are available for other bindings
+        return Content(authnRequestFactory.CreatePostBindingContent());
+    }
+    else
+    {
+        // other options are available for other bindings
+        var securityToken = saml2.GetPostSecurityToken(this.Request);
+
+        // fail if there is no token
+        if ( securityToken == null )
+        {
+            throw new ArgumentNullException("No security token found in the response accoding to the Response Binding configuration");
+        }
+
+        // the token will be validated
+        var configuration = new SecurityTokenHandlerConfiguration
+        {
+            CertificateValidator = X509CertificateValidator.None,
+            IssuerNameRegistry   = new DemoClientIssuerNameRegistry(),
+            DetectReplayedTokens = false                    
+        };
+        configuration.AudienceRestriction.AudienceMode = AudienceUriMode.Never;
+
+        var tokenHandler = new Saml2SecurityTokenHandler()
+        {
+            Configuration = configuration                    
+        };
+        var identity     = tokenHandler.ValidateToken(securityToken);
+
+        // the token is validated succesfully
+        var principal = new ClaimsPrincipal(identity);
+        if (principal.Identity.IsAuthenticated)
+        {
+            FormsAuthentication.RedirectFromLoginPage(principal.Identity.Name, false);
+        }
+        else
+        {
+            throw new ArgumentNullException("principal", "Unauthenticated principal returned from token validation");
+        }
+
+        return new EmptyResult();
+    }
+}
+```
+
+## Version History:
+
+* 0.60
+
+    - ARTIFACT response binding is supported (that includes the
+    `ArtifactResolve`/`ArtifactResponse` handling)
 
 * 0.53
 
-    - AuthnRequest is correctly signable, assuming the signing 
+    - `AuthnRequest` is correctly signable, assuming the signing 
     certificate is provided
 
 * 0.51
 
-	- partial work on request signing. This ultimately leads to the ARTIFACT response binding where the ArtifactResolve has to be signed.
+	- partial work on request signing. This ultimately leads to the ARTIFACT response binding where the `ArtifactResolve` has to be signed.
 
 * 0.51
 
@@ -54,7 +136,7 @@ Version History:
 * 0.10 
     - core SAML2 elements: the module and the token 
 
-Roadmap:
+## Roadmap
 
 * 0.1-0.49 
     - development versions lacking core features

@@ -21,14 +21,13 @@ namespace OldMusicBox.Saml2.Model.Request
         public AuthnRequestFactory() 
         {
             this.AuthnRequest           = new AuthnRequest();
-            this.X509SignatureAlgorithm = SignatureAlgorithm.SHA256;
 
             this.MessageSerializer = new DefaultMessageSerializer();
             this.MessageSigner     = new DefaultMessageSigner(this.MessageSerializer);
 
-            this.AuthnRequest.ID = string.Format("id_{0}", Guid.NewGuid());
+            this.AuthnRequest.ID           = string.Format("id_{0}", Guid.NewGuid());
             this.AuthnRequest.IssueInstant = DateTime.UtcNow;
-            this.AuthnRequest.Version = ProtocolVersion._20;
+            this.AuthnRequest.Version      = ProtocolVersion._20;
 
             this.Encoding = Encoding.UTF8;
         }
@@ -130,14 +129,7 @@ namespace OldMusicBox.Saml2.Model.Request
         /// <summary>
         /// Certificate used to create a signature
         /// </summary>
-        public X509Certificate2 X509SignatureCertificate { get; set; }
-
-
-        public SignatureAlgorithm X509SignatureAlgorithm { get; set; }
-        /// <summary>
-        /// Should the request contain the full X509KeyInfo section in the signature
-        /// </summary>
-        public bool X509IncludeKeyInfo { get; set; }
+        public X509Configuration X509Configuration { get; set; }
 
         #region Post binding
 
@@ -179,7 +171,9 @@ namespace OldMusicBox.Saml2.Model.Request
         protected virtual string CreatePostBindingToken()
         {
             // sign the request?
-            if (this.X509SignatureCertificate == null)
+            if ( this.X509Configuration == null &&
+                 this.X509Configuration.SignatureCertificate != null
+                )
             {
                 return this.MessageSerializer.Serialize(
                     this.AuthnRequest,
@@ -191,7 +185,7 @@ namespace OldMusicBox.Saml2.Model.Request
             }
             else
             {
-                var signedAuthnRequest = this.MessageSigner.Sign(this.AuthnRequest, this.X509SignatureCertificate, this.X509IncludeKeyInfo, this.X509SignatureAlgorithm);
+                var signedAuthnRequest = this.MessageSigner.Sign(this.AuthnRequest, this.X509Configuration);
                 return Convert.ToBase64String(signedAuthnRequest);
             }
         }

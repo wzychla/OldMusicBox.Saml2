@@ -1,4 +1,6 @@
 ﻿using OldMusicBox.Saml2.Constants;
+using OldMusicBox.Saml2.Model;
+using OldMusicBox.Saml2.Model.Artifact;
 using OldMusicBox.Saml2.Model.Request;
 using System;
 using System.Collections.Generic;
@@ -29,10 +31,18 @@ namespace OldMusicBox.Saml2.DemoClient.Controllers
             var assertionConsumerServiceURL = ConfigurationManager.AppSettings["AssertionConsumerServiceURL"];
             var assertionIssuer             = ConfigurationManager.AppSettings["AssertionIssuer"];
             var identityProvider            = ConfigurationManager.AppSettings["IdentityProvider"];
-            var artifactResolution          = ConfigurationManager.AppSettings["ArtifactResolution"];
+            var artifactResolve             = ConfigurationManager.AppSettings["ArtifactResolve"];
 
             var requestBinding  = Binding.POST;
-            var responseBinding = Binding.POST;
+            var responseBinding = Binding.ARTIFACT;
+
+            // this is optional
+            var x509Configuration = new X509Configuration()
+            {
+                SignatureCertificate = new ClientCertificateProvider().GetClientCertificate(),
+                IncludeKeyInfo       = true,
+                SignatureAlgorithm   = Signature.SignatureAlgorithm.SHA256
+            };
 
             // check if this is 
             if (!saml2.IsSignInResponse(this.Request))
@@ -44,9 +54,7 @@ namespace OldMusicBox.Saml2.DemoClient.Controllers
                 authnRequestFactory.AssertionIssuer             = assertionIssuer;
                 authnRequestFactory.Destination                 = identityProvider;
 
-                // these two are optional, necessary only if the IdP expects the request is signed
-                authnRequestFactory.X509SignatureCertificate = new ClientCertificateProvider().GetClientCertificate();
-                authnRequestFactory.X509IncludeKeyInfo       = true;
+                authnRequestFactory.X509Configuration = x509Configuration;
 
                 authnRequestFactory.RequestBinding  = requestBinding;
                 authnRequestFactory.ResponseBinding = responseBinding;
@@ -69,7 +77,15 @@ namespace OldMusicBox.Saml2.DemoClient.Controllers
                 switch (responseBinding)
                 {
                     case Binding.ARTIFACT:
-                        securityToken = saml2.GetArtifactSecurityToken(this.Request);
+
+                        var artifactConfig = new ArtifactResolveConfiguration()
+                        {
+                            ArtifactResolveUri = artifactResolve,
+                            Issuer             = assertionIssuer,
+                            X509Configuration  = x509Configuration
+                        };
+
+                        securityToken = saml2.GetArtifactSecurityToken(this.Request, artifactConfig);
                         break;
                     case Binding.POST:
                         securityToken = saml2.GetPostSecurityToken(this.Request);
