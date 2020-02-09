@@ -62,6 +62,9 @@
     <Compile Include="Model\Artifact\ArtifactResolveConfiguration.cs" />
     <Compile Include="Model\Artifact\ArtifactResolveException.cs" />
     <Compile Include="Model\Artifact\ArtifactResponse.cs" />
+    <Compile Include="Model\Logout\LogoutRequest.cs" />
+    <Compile Include="Model\Logout\LogoutRequestFactory.cs" />
+    <Compile Include="Model\Logout\LogoutResponse.cs" />
     <Compile Include="Model\X509Configuration.cs" />
     <Compile Include="Other\SoapEnvelopeProcessor.cs" />
     <Compile Include="Other\X509CertificateExtensions.cs" />
@@ -89,11 +92,9 @@
     <Compile Include="Validation\ValidationException.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\AuthnRequestPostBinding.html" />
+    <EmbeddedResource Include="Resources\PostBinding.html" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Model\Logout\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

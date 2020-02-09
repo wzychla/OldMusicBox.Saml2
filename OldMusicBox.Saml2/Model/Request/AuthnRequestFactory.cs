@@ -151,7 +151,7 @@ namespace OldMusicBox.Saml2.Model.Request
                 throw new ArgumentNullException("Destination", "Response Binding cannot be null");
             }
 
-            string contentPage = new ResourceFactory().Create(ResourceFactory.EmbeddedResource.AuthnRequestPostBinding);
+            string contentPage = new ResourceFactory().Create(ResourceFactory.EmbeddedResource.PostBinding);
 
             contentPage = contentPage.Replace("((Destination))", this.Destination);
             contentPage = contentPage.Replace("((SAMLRequest))", this.CreatePostBindingToken());
@@ -171,9 +171,14 @@ namespace OldMusicBox.Saml2.Model.Request
         protected virtual string CreatePostBindingToken()
         {
             // sign the request?
-            if ( this.X509Configuration == null &&
+            if ( this.X509Configuration != null &&
                  this.X509Configuration.SignatureCertificate != null
                 )
+            {
+                var signedAuthnRequest = this.MessageSigner.Sign(this.AuthnRequest, this.X509Configuration);
+                return Convert.ToBase64String(signedAuthnRequest);
+            }
+            else
             {
                 return this.MessageSerializer.Serialize(
                     this.AuthnRequest,
@@ -182,11 +187,6 @@ namespace OldMusicBox.Saml2.Model.Request
                         ShouldBase64Encode = true,
                         ShouldDeflate = false
                     });
-            }
-            else
-            {
-                var signedAuthnRequest = this.MessageSigner.Sign(this.AuthnRequest, this.X509Configuration);
-                return Convert.ToBase64String(signedAuthnRequest);
             }
         }
 

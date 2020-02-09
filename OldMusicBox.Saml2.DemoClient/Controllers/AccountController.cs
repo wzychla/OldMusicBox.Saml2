@@ -20,9 +20,6 @@ namespace OldMusicBox.Saml2.DemoClient.Controllers
         /// <summary>
         /// Logon flow 
         /// </summary>
-        /// <remarks>
-        /// The goal is to mimic the way SAM is used
-        /// </remarks>
         public ActionResult Logon()
         {
             var saml2    = new Saml2AuthenticationModule();
@@ -34,7 +31,7 @@ namespace OldMusicBox.Saml2.DemoClient.Controllers
             var artifactResolve             = ConfigurationManager.AppSettings["ArtifactResolve"];
 
             var requestBinding  = Binding.POST;
-            var responseBinding = Binding.ARTIFACT;
+            var responseBinding = Binding.POST;
 
             // this is optional
             var x509Configuration = new X509Configuration()
@@ -115,11 +112,21 @@ namespace OldMusicBox.Saml2.DemoClient.Controllers
                 };
                 var identity     = tokenHandler.ValidateToken(securityToken);
 
+                // this is the SessionIndex, store it if necessary
+                string sessionIndex = securityToken.Assertion.ID;
+
                 // the token is validated succesfully
                 var principal = new ClaimsPrincipal(identity);
                 if (principal.Identity.IsAuthenticated)
                 {
-                    FormsAuthentication.RedirectFromLoginPage(principal.Identity.Name, false);
+                    var formsTicket = new FormsAuthenticationTicket(
+                        1, principal.Identity.Name, DateTime.UtcNow, DateTime.UtcNow.Add(FormsAuthentication.Timeout), false, sessionIndex);
+
+                    this.Response.AppendCookie(new HttpCookie(FormsAuthentication.FormsCookieName, FormsAuthentication.Encrypt(formsTicket)));
+
+                    var redirectUrl = FormsAuthentication.GetRedirectUrl(principal.Identity.Name, false);
+
+                    return Redirect( redirectUrl );
                 }
                 else
                 {
@@ -130,16 +137,36 @@ namespace OldMusicBox.Saml2.DemoClient.Controllers
             }
         }
 
+        /// <summary>
+        /// SAML2 Logout. 
+        /// 
+        /// The SAML2 logout is complicated as there are two main scenarios.
+        /// 
+        /// Scenario 1.
+        /// 
+        /// It's this application that triggers the logout. 
+        /// The application sends the LogoutRequest to the server
+        /// and the server is supposed to answer with the LogoutResponse,
+        /// sent to this endpoint (assuming the /account/logout is
+        /// registered as the logout endpoint in the IdP).
+        /// 
+        /// In this app the LogoutRequest sending is handled in the HomeController
+        /// (home/logout)
+        /// 
+        /// Scenario 2.
+        /// 
+        /// Another application triggers the logout. The server
+        /// gets the LogoutRequest from this another app and
+        /// sends LogoutRequest here. This app is supposed to
+        /// answer with the LogoutResponse.
+        /// 
+        /// Both scenarios means that to handle logouts correctly,
+        /// the app has to be able to both send and receive
+        /// both LogoutRequest and LogoutResponse
+        /// </summary>
         public ActionResult Logout()
         {
             return new EmptyResult();
-        }
-
-        public ActionResult LocalLogout()
-        {
-            FormsAuthentication.SignOut();
-
-            return Redirect("/");
         }
     }
 }

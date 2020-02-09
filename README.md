@@ -8,9 +8,9 @@ The goal of this project is to provide an independent .NET Saml2 Client/Server L
 * target classic .NET Framework, make it .NET Core compatible soon
 * provide both client and server side implementation of Saml2
 
-## Current Version
+## Current Version: 0.61
 
-Current version is **0.60**. Please refer to the change list and the road map below.
+Please refer to the change list and the road map below.
 
 ## Client interface example
 
@@ -89,6 +89,10 @@ public ActionResult Logon()
 
 ## Version History:
 
+* 0.61
+
+    - `LogoutRequest` POST binding
+
 * 0.60
 
     - ARTIFACT response binding is supported (that includes the
@@ -138,16 +142,9 @@ public ActionResult Logon()
 
 ## Roadmap
 
-* 0.1-0.49 
-    - development versions lacking core features
+* 0.65
 
-* 0.50 
-    - first important milestone, client can authenticate agaist Microsoft ADFS using 
-        * POST/REDIRECT Request binding
-        * POST Response binding
-
-* 0.60
-    - support ARTIFACT response binding
+    * `LogoutResponse` 
 
 * 0.75 
     - support REDIRECT response binding
@@ -156,7 +153,6 @@ public ActionResult Logon()
 * 1.0 
     * client side interface so that it's possible to login against ADFS using any combination of supported Request/Response bindings
     * support at least REDIRECT, POST and ARTIFACT client's bindings
-    * `LogoutRequest`, `LogoutResponse`
 
 * later on
 

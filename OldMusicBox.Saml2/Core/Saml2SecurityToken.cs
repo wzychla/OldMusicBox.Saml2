@@ -94,6 +94,27 @@ namespace OldMusicBox.Saml2
             }
         }
 
+        /// <summary>
+        /// Return the first assertion (if necessary for some reason)
+        /// </summary>
+        public Assertion Assertion
+        {
+            get
+            {
+                if (this.Response != null)
+                {
+                    var assertion = this.Response.Assertions.FirstOrDefault();
+
+                    if (assertion != null)
+                    {
+                        return assertion;
+                    }
+                }
+
+                throw new NullReferenceException("Assertion is null which is caused by the Response having no assertions");
+            }
+        }
+
         public override ReadOnlyCollection<SecurityKey> SecurityKeys
         {
             get;
