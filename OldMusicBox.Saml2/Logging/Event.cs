@@ -24,6 +24,8 @@ namespace OldMusicBox.Saml2.Logging
         // artifact response
         ArtifactResponse,
         // logout request
-        LogoutRequest
+        LogoutRequest,
+        // logout response
+        LogoutResponse
     }
 }

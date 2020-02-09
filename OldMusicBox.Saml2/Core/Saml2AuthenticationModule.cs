@@ -1,6 +1,5 @@
 ﻿using OldMusicBox.Saml2.Constants;
 using OldMusicBox.Saml2.Logging;
-using OldMusicBox.Saml2.Message;
 using OldMusicBox.Saml2.Model;
 using OldMusicBox.Saml2.Model.Artifact;
 using OldMusicBox.Saml2.Serialization;
@@ -61,6 +60,36 @@ namespace OldMusicBox.Saml2
                 (request.HttpMethod == "GET" && request.QueryString[Elements.SAMLARTIFACT] != null) ||
                 (request.HttpMethod == "GET" && request.QueryString[Elements.SAMLRESPONSE] != null) ||
                 (request.HttpMethod == "POST" && request.Form[Elements.SAMLRESPONSE] != null);
+        }
+
+        /// <summary>
+        /// The Logout response passed by the identity provider
+        /// </summary>
+        public virtual bool IsLogoutResponse(HttpRequestBase request)
+        {
+            if (request == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            return
+                (request.HttpMethod == "GET"  && request.QueryString[Elements.SAMLRESPONSE] != null) ||
+                (request.HttpMethod == "POST" && request.Form[Elements.SAMLRESPONSE] != null);
+        }
+
+        /// <summary>
+        /// The Logout request passed by the identity provider
+        /// </summary>
+        public virtual bool IsLogoutRequest(HttpRequestBase request)
+        {
+            if (request == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            return
+                (request.HttpMethod == "GET" && request.QueryString[Elements.SAMLREQUEST] != null) ||
+                (request.HttpMethod == "POST" && request.Form[Elements.SAMLREQUEST] != null);
         }
 
         /// <summary>

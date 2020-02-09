@@ -57,6 +57,10 @@ namespace OldMusicBox.Saml2.DemoClient.Controllers
                 Text = this.User.Identity.Name
             };
 
+            // the identity provider possibly needs the SessionIndex, too
+            // note that the SessionIndex is obtained in the Account/Logon
+            // and stored for the current session
+
             switch (logoutRequestFactory.RequestBinding)
             {
                 case Constants.Binding.POST:

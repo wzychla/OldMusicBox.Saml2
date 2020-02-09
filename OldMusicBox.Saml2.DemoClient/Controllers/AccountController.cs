@@ -1,6 +1,7 @@
 ﻿using OldMusicBox.Saml2.Constants;
 using OldMusicBox.Saml2.Model;
 using OldMusicBox.Saml2.Model.Artifact;
+using OldMusicBox.Saml2.Model.Logout;
 using OldMusicBox.Saml2.Model.Request;
 using System;
 using System.Collections.Generic;
@@ -132,8 +133,6 @@ namespace OldMusicBox.Saml2.DemoClient.Controllers
                 {
                     throw new ArgumentNullException("principal", "Unauthenticated principal returned from token validation");
                 }
-
-                return new EmptyResult();
             }
         }
 
@@ -166,6 +165,23 @@ namespace OldMusicBox.Saml2.DemoClient.Controllers
         /// </summary>
         public ActionResult Logout()
         {
+            var sam2 = new Saml2AuthenticationModule();
+            string Message;
+
+            if ( sam2.IsLogoutRequest( this.Request ) || 
+                 sam2.IsLogoutResponse( this.Request )
+                )
+            {
+                // first check if this is a LogoutResponse from the IdP
+                var logoutResponse = new LogoutResponseFactory().From(this.Request);
+                if ( logoutResponse != null )
+                {
+                    var result = sam2.MessageSigner.Validate(logoutResponse, null, out Message);
+                }
+
+                // then check if this is a LogoutRequest from the IdP
+            }
+
             return new EmptyResult();
         }
     }

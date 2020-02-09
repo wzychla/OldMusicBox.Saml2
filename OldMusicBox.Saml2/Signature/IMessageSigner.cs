@@ -17,5 +17,11 @@ namespace OldMusicBox.Saml2.Signature
             ISignableMessage   message,
             X509Configuration  x509Configuration
             );
+
+        bool Validate(
+            IVerifiableMessage message,
+            X509Certificate2   certificate,
+            out string Message
+            );
     }
 }

@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace OldMusicBox.Saml2.Message
+namespace OldMusicBox.Saml2.Model
 {
     /// <summary>
     /// Raw message 
-    /// 
     /// </summary>
     public class RawMessage
     {

@@ -151,7 +151,7 @@ namespace OldMusicBox.Saml2.Model.Request
                 throw new ArgumentNullException("Destination", "Response Binding cannot be null");
             }
 
-            string contentPage = new ResourceFactory().Create(ResourceFactory.EmbeddedResource.PostBinding);
+            string contentPage = new ResourceFactory().Create(ResourceFactory.EmbeddedResource.RequestPostBinding);
 
             contentPage = contentPage.Replace("((Destination))", this.Destination);
             contentPage = contentPage.Replace("((SAMLRequest))", this.CreatePostBindingToken());

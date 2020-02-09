@@ -31,7 +31,10 @@ namespace OldMusicBox.Saml2.Signature
         private IMessageSerializer messageSerializer { get; set; }
         private Encoding encoding { get; set; }
 
-        public byte[] Sign(
+        /// <summary>
+        /// Message signing
+        /// </summary>
+        public virtual byte[] Sign(
             ISignableMessage message, 
             X509Configuration x509Configuration)
         {
@@ -106,6 +109,27 @@ namespace OldMusicBox.Saml2.Signature
 
             // convert
             return this.encoding.GetBytes(xml.OuterXml);
+        }
+
+        public virtual bool Validate(
+            IVerifiableMessage message,
+            X509Certificate2   certificate,
+            out string Message
+            )
+        {
+            if ( message == null )
+            {
+                throw new ArgumentNullException("message");
+            }
+            if ( certificate == null )
+            {
+                throw new ArgumentNullException("certificate");
+            }
+
+            #warning TODO!
+
+            Message = string.Empty;
+            return false;
         }
     }
 }

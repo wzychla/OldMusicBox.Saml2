@@ -56,8 +56,9 @@
     <Compile Include="Logging\LoggerFactory.cs" />
     <Compile Include="Logging\NullLogger.cs" />
     <Compile Include="Core\Saml2AuthenticationModule.cs" />
-    <Compile Include="Message\RawMessage.cs" />
-    <Compile Include="Message\RawMessageFactory.cs" />
+    <Compile Include="Signature\IVerifiableMessage.cs" />
+    <Compile Include="Model\RawMessage.cs" />
+    <Compile Include="Model\RawMessageFactory.cs" />
     <Compile Include="Model\Artifact\ArtifactResolve.cs" />
     <Compile Include="Model\Artifact\ArtifactResolveConfiguration.cs" />
     <Compile Include="Model\Artifact\ArtifactResolveException.cs" />
@@ -65,6 +66,7 @@
     <Compile Include="Model\Logout\LogoutRequest.cs" />
     <Compile Include="Model\Logout\LogoutRequestFactory.cs" />
     <Compile Include="Model\Logout\LogoutResponse.cs" />
+    <Compile Include="Model\Logout\LogoutResponseFactory.cs" />
     <Compile Include="Model\X509Configuration.cs" />
     <Compile Include="Other\SoapEnvelopeProcessor.cs" />
     <Compile Include="Other\X509CertificateExtensions.cs" />
@@ -92,9 +94,11 @@
     <Compile Include="Validation\ValidationException.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\PostBinding.html" />
+    <EmbeddedResource Include="Resources\RequestPostBinding.html" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ResponsePostBinding.html" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

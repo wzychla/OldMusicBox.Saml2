@@ -14,14 +14,18 @@ namespace OldMusicBox.Saml2.Resources
     {
         public enum EmbeddedResource
         {
-            PostBinding
+            RequestPostBinding,
+            ResponsePostBinding
         }
 
         private Dictionary<EmbeddedResource, string> resourceNames =
             new Dictionary<EmbeddedResource, string>()
             {
                 {
-                    EmbeddedResource.PostBinding, "PostBinding.html"
+                    EmbeddedResource.RequestPostBinding, "RequestPostBinding.html"
+                },
+                {
+                    EmbeddedResource.ResponsePostBinding, "ResponsePostBinding.html"
                 }
             };
 

@@ -8,29 +8,48 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace OldMusicBox.Saml2.Model.Logout
 {
     /// <summary>
-    /// Logout request factory
+    /// Logout response factory
     /// </summary>
-    public class LogoutRequestFactory
+    public class LogoutResponseFactory
     {
-        public LogoutRequestFactory()
+        public LogoutResponseFactory()
         {
-            this.LogoutRequest = new LogoutRequest();
+            this.LogoutResponse = new LogoutResponse();
 
             this.MessageSerializer = new DefaultMessageSerializer();
             this.MessageSigner     = new DefaultMessageSigner(this.MessageSerializer);
 
-            this.LogoutRequest.ID           = string.Format("id_{0}", Guid.NewGuid());
-            this.LogoutRequest.IssueInstant = DateTime.UtcNow;
-            this.LogoutRequest.Version      = ProtocolVersion._20;
+            this.LogoutResponse.ID           = string.Format("id_{0}", Guid.NewGuid());
+            this.LogoutResponse.IssueInstant = DateTime.UtcNow;
+            this.LogoutResponse.Version      = ProtocolVersion._20;
 
             this.Encoding = Encoding.UTF8;
         }
 
-        public LogoutRequest LogoutRequest { get; private set; }
+        /// <summary>
+        /// Create LogoutResponse when sent by the IdP
+        /// </summary>
+        public LogoutResponse From( HttpRequestBase request )
+        {
+            if (request == null) throw new ArgumentNullException();
+
+            var rawMessage = new RawMessageFactory().FromIdpResponse(request);
+            if (rawMessage == null) return null;
+
+            // log
+            new LoggerFactory().For(this).Debug(Event.LogoutResponse, rawMessage.Payload);
+
+            var logoutResponse        = this.MessageSerializer.Deserialize<LogoutResponse>(rawMessage.Payload, new MessageDeserializationParameters() );
+            logoutResponse.RawMessage = rawMessage;
+            return logoutResponse;
+        }
+
+        public LogoutResponse LogoutResponse { get; private set; }
 
         /// <summary>
         /// Message serializer
@@ -51,11 +70,11 @@ namespace OldMusicBox.Saml2.Model.Logout
         {
             get
             {
-                return this.LogoutRequest.Issuer;
+                return this.LogoutResponse.Issuer;
             }
             set
             {
-                this.LogoutRequest.Issuer = value;
+                this.LogoutResponse.Issuer = value;
             }
         }
 
@@ -66,41 +85,26 @@ namespace OldMusicBox.Saml2.Model.Logout
         {
             get
             {
-                return this.LogoutRequest.Destination;
+                return this.LogoutResponse.Destination;
             }
             set
             {
-                this.LogoutRequest.Destination = value;
+                this.LogoutResponse.Destination = value;
             }
         }
 
         /// <summary>
-        /// Session Index
+        /// Correlation key
         /// </summary>
-        public string SessionIndex
+        public string InResponseTo
         {
             get
             {
-                return this.LogoutRequest.SessionIndex;
+                return this.LogoutResponse.InResponseTo;
             }
             set
             {
-                this.LogoutRequest.SessionIndex = value;
-            }
-        }
-
-        /// <summary>
-        /// Name ID
-        /// </summary>
-        public NameID NameID
-        {
-            get
-            {
-                return this.LogoutRequest.NameID;
-            }
-            set
-            {
-                this.LogoutRequest.NameID = value;
+                this.LogoutResponse.InResponseTo = value;
             }
         }
 
@@ -130,11 +134,11 @@ namespace OldMusicBox.Saml2.Model.Logout
                 throw new ArgumentNullException("Destination", "Destination cannot be null");
             }
 
-            string contentPage = new ResourceFactory().Create(ResourceFactory.EmbeddedResource.RequestPostBinding);
+            string contentPage = new ResourceFactory().Create(ResourceFactory.EmbeddedResource.ResponsePostBinding);
 
-            contentPage = contentPage.Replace("((Destination))", this.Destination);
-            contentPage = contentPage.Replace("((SAMLRequest))", this.CreatePostBindingToken());
-            contentPage = contentPage.Replace("((RelayState))",  string.Empty);
+            contentPage = contentPage.Replace("((Destination))",  this.Destination);
+            contentPage = contentPage.Replace("((SAMLResponse))", this.CreatePostBindingToken());
+            contentPage = contentPage.Replace("((RelayState))",   string.Empty);
 
             // log
             new LoggerFactory().For(this).Debug(Event.LogoutRequest, contentPage);
@@ -154,11 +158,11 @@ namespace OldMusicBox.Saml2.Model.Logout
                 this.X509Configuration.SignatureCertificate != null
                 )
             {
-                var signedLogoutRequest = this.MessageSigner.Sign(this.LogoutRequest, this.X509Configuration);
-                return Convert.ToBase64String(signedLogoutRequest);
+                var signedLogoutResponse = this.MessageSigner.Sign(this.LogoutResponse, this.X509Configuration);
+                return Convert.ToBase64String(signedLogoutResponse);
             }
 
-            throw new ArgumentException("LogoutRequest must be signed. The factory needs a non-empty X509 configuration.");
+            throw new ArgumentException("LogoutResponse must be signed. The factory needs a non-empty X509 configuration.");
         }
 
         #endregion

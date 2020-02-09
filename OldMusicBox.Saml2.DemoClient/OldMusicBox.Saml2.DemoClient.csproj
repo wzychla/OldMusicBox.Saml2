@@ -113,6 +113,7 @@
     <Content Include="ClientCertificate\SAML2DemoClient.p12">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="ClientCertificate\IDP.cer" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
