@@ -3,14 +3,30 @@
 The goal of this project is to provide an independent .NET Saml2 Client/Server Library. The implementation follows the 
 [official specification](http://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf).
 
-## Features:
-
-* target classic .NET Framework, make it .NET Core compatible soon
-* provide both client and server side implementation of Saml2
-
 ## Current Version: 0.65
 
 Please refer to the change list and the road map below.
+
+## Features:
+
+|  Feature  | Status |
+|----|:---:|
+|Unsigned Client REDIRECT binding|yes|
+|Signed Client REDIRECT binding|not yet|
+|Unsigned Client POST binding|yes|
+|Signed Client POST binding|yes|
+|Signed Client ARTIFACT binding|yes|
+|Client LogoutRequest|yes|
+|Client LogoutResponse|yes|
+|Server APIs|not yet|
+|RSASHA1 signatures|yes|
+|RSASHA256 signatures|yes|
+|ECDSA signatures|not yet|
+|Assertion encryption|not yet|
+|Client metadata|not yet|
+|Server metadata|not yet|
+|.NET Framework|4.6.2+|
+|.NET Core|not yet|
 
 ## Client interface example
 
