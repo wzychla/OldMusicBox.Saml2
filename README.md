@@ -8,7 +8,7 @@ The goal of this project is to provide an independent .NET Saml2 Client/Server L
 * target classic .NET Framework, make it .NET Core compatible soon
 * provide both client and server side implementation of Saml2
 
-## Current Version: 0.61
+## Current Version: 0.65
 
 Please refer to the change list and the road map below.
 
@@ -89,6 +89,13 @@ public ActionResult Logon()
 
 ## Version History:
 
+* 0.65
+
+    - `LogoutResponse`. Note that there's still some work to do. This is because a SAML2 provider won't correctly terminate the session if the `LogoutRequest` NameID **doesn't exactly match** the NameID
+    passed in the Assertion in `AuthnResponse`. However, for this to work:
+        - the provider has to issue the Name Identifier claim (which is not default for some providers like ADFS)
+        - all NameID parameters (including the `Format`, `NameQualifier` and `SPNameQualifier` have to be stored in the local session so that they can be included in the `LogoutRequest`)
+
 * 0.61
 
     - `LogoutRequest` POST binding
@@ -141,10 +148,6 @@ public ActionResult Logon()
     - core SAML2 elements: the module and the token 
 
 ## Roadmap
-
-* 0.65
-
-    * `LogoutResponse` 
 
 * 0.75 
     - support REDIRECT response binding

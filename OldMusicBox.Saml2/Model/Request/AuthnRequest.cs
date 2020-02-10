@@ -48,6 +48,11 @@ namespace OldMusicBox.Saml2.Model
 
     public class NameIDPolicy
     {
+        public NameIDPolicy()
+        {
+            this.Format = Constants.NameID.UNSPECIFIED;
+        }
+
         [XmlAttribute("AllowCreate")]
         public bool AllowCreate { get; set; }
 

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace OldMusicBox.Saml2.Model.Logout
 {
@@ -28,6 +29,24 @@ namespace OldMusicBox.Saml2.Model.Logout
             this.LogoutRequest.Version      = ProtocolVersion._20;
 
             this.Encoding = Encoding.UTF8;
+        }
+
+        /// <summary>
+        /// Create LogoutRequest when sent by the IdP
+        /// </summary>
+        public LogoutRequest From(HttpRequestBase request)
+        {
+            if (request == null) throw new ArgumentNullException();
+
+            var rawMessage = new RawMessageFactory().FromIdpRequest(request);
+            if (rawMessage == null) return null;
+
+            // log
+            new LoggerFactory().For(this).Debug(Event.LogoutRequest, rawMessage.Payload);
+
+            var logoutRequest        = this.MessageSerializer.Deserialize<LogoutRequest>(rawMessage.Payload, new MessageDeserializationParameters());
+            logoutRequest.RawMessage = rawMessage;
+            return logoutRequest;
         }
 
         public LogoutRequest LogoutRequest { get; private set; }

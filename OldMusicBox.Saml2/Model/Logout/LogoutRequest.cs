@@ -13,7 +13,9 @@ namespace OldMusicBox.Saml2.Model
     /// Logout request
     /// </summary>
     [XmlRoot("LogoutRequest", Namespace = Namespaces.PROTOCOL)]
-    public class LogoutRequest : ISignableMessage
+    public class LogoutRequest : 
+        ISignableMessage,
+        IVerifiableMessage
     {
         [XmlAttribute("ID")]
         public string ID { get; set; }
@@ -35,5 +37,11 @@ namespace OldMusicBox.Saml2.Model
 
         [XmlElement("SessionIndex", Namespace = Namespaces.PROTOCOL)]
         public string SessionIndex { get; set; }
+
+        /// <summary>
+        /// Message source
+        /// </summary>
+        [XmlIgnore]
+        public RawMessage RawMessage { get; set; }
     }
 }

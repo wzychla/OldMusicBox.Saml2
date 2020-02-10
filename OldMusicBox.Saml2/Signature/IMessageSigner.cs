@@ -20,8 +20,7 @@ namespace OldMusicBox.Saml2.Signature
 
         bool Validate(
             IVerifiableMessage message,
-            X509Certificate2   certificate,
-            out string Message
+            X509Certificate2   certificate
             );
     }
 }

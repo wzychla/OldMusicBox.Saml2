@@ -30,13 +30,20 @@ namespace OldMusicBox.Saml2.Model
             // response is always base64 encoded
             var response = request.Form[Elements.SAMLRESPONSE];
 
-            var data  = Convert.FromBase64String(response);
-            var token = this.encoding.GetString(data);
-
-            return new RawMessage()
+            if (!string.IsNullOrEmpty(response))
             {
-                Payload = token
-            };
+                var data = Convert.FromBase64String(response);
+                var token = this.encoding.GetString(data);
+
+                return new RawMessage()
+                {
+                    Payload = token
+                };
+            }
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -49,13 +56,20 @@ namespace OldMusicBox.Saml2.Model
             // response is always base64 encoded
             var response = request.Form[Elements.SAMLREQUEST];
 
-            var data  = Convert.FromBase64String(response);
-            var token = this.encoding.GetString(data);
-
-            return new RawMessage()
+            if (!string.IsNullOrEmpty(response))
             {
-                Payload = token
-            };
+                var data = Convert.FromBase64String(response);
+                var token = this.encoding.GetString(data);
+
+                return new RawMessage()
+                {
+                    Payload = token
+                };
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

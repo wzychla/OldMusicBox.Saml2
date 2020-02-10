@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Constants\Binding.cs" />
     <Compile Include="Constants\Elements.cs" />
+    <Compile Include="Constants\NameID.cs" />
     <Compile Include="Constants\Namespaces.cs" />
     <Compile Include="Constants\ProtocolVersion.cs" />
     <Compile Include="Constants\StatusCodes.cs" />

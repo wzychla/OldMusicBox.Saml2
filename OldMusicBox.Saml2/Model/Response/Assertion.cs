@@ -27,6 +27,9 @@ namespace OldMusicBox.Saml2.Model
         [XmlAttribute("ID")]
         public string ID { get; set; }
 
+        [XmlAttribute("Version")]
+        public string Version { get; set; }
+
         [XmlAttribute("IssueInstant")]
         public DateTime IssueInstant { get; set; }
 
@@ -38,9 +41,6 @@ namespace OldMusicBox.Saml2.Model
 
         [XmlElement("Subject", Namespace = Namespaces.ASSERTION)]
         public Subject Subject { get; set; }
-
-        [XmlAttribute("Version")]
-        public string Version { get; set; }
 
         public X509SecurityToken GetX509SecurityToken()
         {

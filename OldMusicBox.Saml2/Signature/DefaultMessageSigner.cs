@@ -1,6 +1,8 @@
-﻿using OldMusicBox.Saml2.Logging;
+﻿using OldMusicBox.Saml2.Constants;
+using OldMusicBox.Saml2.Logging;
 using OldMusicBox.Saml2.Model;
 using OldMusicBox.Saml2.Serialization;
+using OldMusicBox.Saml2.Validation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -113,11 +115,12 @@ namespace OldMusicBox.Saml2.Signature
 
         public virtual bool Validate(
             IVerifiableMessage message,
-            X509Certificate2   certificate,
-            out string Message
+            X509Certificate2   certificate
             )
         {
-            if ( message == null )
+            if ( message == null || message.RawMessage == null ||
+                 string.IsNullOrEmpty( message.RawMessage.Payload )
+                )
             {
                 throw new ArgumentNullException("message");
             }
@@ -126,9 +129,26 @@ namespace OldMusicBox.Saml2.Signature
                 throw new ArgumentNullException("certificate");
             }
 
-            #warning TODO!
+            // search for signatures (possibly multiple)
+            var xml = new XmlDocument();
+            xml.LoadXml(message.RawMessage.Payload);
 
-            Message = string.Empty;
+            var signatureNodes = xml.GetElementsByTagName("Signature", Namespaces.XMLDSIG);
+            foreach (XmlElement signatureNode in signatureNodes)
+            {
+                var signedXml = new SignedXml(signatureNode.ParentNode as XmlElement);
+                signedXml.LoadXml(signatureNode);
+                signedXml.SafeCanonicalizationMethods.Add("http://www.w3.org/TR/1999/REC-xpath-19991116");
+
+                var result = signedXml.CheckSignature(certificate.PublicKey.Key);
+
+                if (!result)
+                {
+                    throw new ValidationException(string.Format("{0} signature validation failed", message.GetType().Name ));
+                }
+
+                return result;
+            }
             return false;
         }
     }

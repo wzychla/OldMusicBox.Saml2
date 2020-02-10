@@ -7,6 +7,7 @@ using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 
 namespace OldMusicBox.Saml2.DemoClient.Controllers
 {
@@ -31,6 +32,7 @@ namespace OldMusicBox.Saml2.DemoClient.Controllers
         [Authorize]
         public ActionResult Logout()
         {
+            var assertionConsumerServiceURL = ConfigurationManager.AppSettings["AssertionConsumerServiceURL"];
             var assertionIssuer             = ConfigurationManager.AppSettings["AssertionIssuer"];
             var identityProvider            = ConfigurationManager.AppSettings["IdentityProvider"];
 
@@ -52,14 +54,22 @@ namespace OldMusicBox.Saml2.DemoClient.Controllers
             logoutRequestFactory.RequestBinding    = requestBinding;
             logoutRequestFactory.X509Configuration = x509Configuration;
 
-            logoutRequestFactory.NameID            = new NameID()
+            logoutRequestFactory.NameID            = new Model.NameID()
             {
-                Text = this.User.Identity.Name
+                Text            = this.User.Identity.Name,
+                #warning TODO!
+                //Format          = Constants.NameID.PERSISTENT,
+                //SPNameQualifier = assertionConsumerServiceURL,
+                //NameQualifier   = identityProvider
             };
 
             // the identity provider possibly needs the SessionIndex, too
             // note that the SessionIndex is obtained in the Account/Logon
             // and stored for the current session
+            var cookieValue = this.Request.Cookies[FormsAuthentication.FormsCookieName].Value;
+            var ticket      = FormsAuthentication.Decrypt(cookieValue);
+
+            logoutRequestFactory.SessionIndex = ticket.UserData;
 
             switch (logoutRequestFactory.RequestBinding)
             {

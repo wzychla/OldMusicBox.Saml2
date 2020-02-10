@@ -3,6 +3,7 @@ using OldMusicBox.Saml2.Model;
 using OldMusicBox.Saml2.Model.Artifact;
 using OldMusicBox.Saml2.Model.Logout;
 using OldMusicBox.Saml2.Model.Request;
+using OldMusicBox.Saml2.Validation;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -165,8 +166,8 @@ namespace OldMusicBox.Saml2.DemoClient.Controllers
         /// </summary>
         public ActionResult Logout()
         {
-            var sam2 = new Saml2AuthenticationModule();
-            string Message;
+            var sam2           = new Saml2AuthenticationModule();
+            var idpCertificate = new ClientCertificateProvider().GetIdPCertificate();
 
             if ( sam2.IsLogoutRequest( this.Request ) || 
                  sam2.IsLogoutResponse( this.Request )
@@ -176,13 +177,66 @@ namespace OldMusicBox.Saml2.DemoClient.Controllers
                 var logoutResponse = new LogoutResponseFactory().From(this.Request);
                 if ( logoutResponse != null )
                 {
-                    var result = sam2.MessageSigner.Validate(logoutResponse, null, out Message);
+                    var result         = sam2.MessageSigner.Validate(logoutResponse, idpCertificate);
+                    if ( !result )
+                    {
+                        throw new ValidationException("The LogoutResponse is not correctly signed with the IdP certificate");
+                    }
                 }
 
                 // then check if this is a LogoutRequest from the IdP
+                var logoutRequest = new LogoutRequestFactory().From(this.Request);
+                if ( logoutRequest != null )
+                {
+                    var result = sam2.MessageSigner.Validate(logoutRequest, idpCertificate);
+                    if (!result)
+                    {
+                        throw new ValidationException("The LogoutResponse is not correctly signed with the IdP certificate");
+                    }
+                }
+
+                // both possibilities were validated
+                // signout can be performed
+                FormsAuthentication.SignOut();
+
+                // create the response in case of the LogoutRequest
+                if ( logoutRequest != null )
+                {
+                    var assertionIssuer  = ConfigurationManager.AppSettings["AssertionIssuer"];
+                    var identityProvider = ConfigurationManager.AppSettings["IdentityProvider"];
+
+                    var x509Configuration = new X509Configuration()
+                    {
+                        SignatureCertificate = new ClientCertificateProvider().GetClientCertificate(),
+                        IncludeKeyInfo       = true,
+                        SignatureAlgorithm   = Signature.SignatureAlgorithm.SHA256
+                    };
+
+                    var requestBinding = Binding.POST;
+
+                    var logoutResponseFactory = new LogoutResponseFactory();
+
+                    logoutResponseFactory.Issuer      = assertionIssuer;
+                    logoutResponseFactory.Destination = identityProvider;
+
+                    logoutResponseFactory.RequestBinding    = requestBinding;
+                    logoutResponseFactory.X509Configuration = x509Configuration;
+
+                    // mark the response
+                    logoutResponseFactory.InResponseTo = logoutRequest.SessionIndex;
+
+                    switch (logoutResponseFactory.RequestBinding)
+                    {
+                        case Constants.Binding.POST:
+                            return Content(logoutResponseFactory.CreatePostBindingContent());
+                        default:
+                            throw new ArgumentException(string.Format("The {0} logout response binding is not supported", logoutResponseFactory.RequestBinding));
+                    }
+                }
             }
 
-            return new EmptyResult();
+            // go back to the main page (possibly with logout
+            return Redirect(FormsAuthentication.DefaultUrl);
         }
     }
 }
