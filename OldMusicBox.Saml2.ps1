@@ -25,6 +25,7 @@ $contents = @"
 		</group>
 	</dependencies>
     <projectUrl>https://github.com/wzychla/OldMusicBox.Saml2</projectUrl>
+	<repository type="git" url="https://github.com/wzychla/OldMusicBox.Saml2.git" />
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
 	<license type="expression">MIT</license>
     <description>OldMusicBox.Saml2. Independent SAML2 implementation.</description>
