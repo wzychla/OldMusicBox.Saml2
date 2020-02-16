@@ -57,8 +57,9 @@ namespace OldMusicBox.Saml2
             }
 
             return
-                (request.HttpMethod == "GET" && request.QueryString[Elements.SAMLARTIFACT] != null) ||
-                (request.HttpMethod == "GET" && request.QueryString[Elements.SAMLRESPONSE] != null) ||
+                (request.HttpMethod == "GET"  && request.QueryString[Elements.SAMLARTIFACT] != null) ||
+                (request.HttpMethod == "POST" && request.Form[Elements.SAMLARTIFACT] != null) ||
+                (request.HttpMethod == "GET"  && request.QueryString[Elements.SAMLRESPONSE] != null) ||
                 (request.HttpMethod == "POST" && request.Form[Elements.SAMLRESPONSE] != null);
         }
 
@@ -121,6 +122,10 @@ namespace OldMusicBox.Saml2
             )
         {
             var samlArt = request.QueryString[Elements.SAMLARTIFACT];
+            if (string.IsNullOrEmpty(samlArt))
+            {
+                samlArt = request.Form[Elements.SAMLARTIFACT];
+            }
             if ( string.IsNullOrEmpty( samlArt ) )
             {
                 throw new ArgumentException("IdP response doesn't contain the SAML artifact");

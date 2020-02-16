@@ -30,8 +30,13 @@ $contents = @"
 	<license type="expression">MIT</license>
     <description>OldMusicBox.Saml2. Independent SAML2 implementation.</description>
     <copyright>Copyright 2020 Wiktor Zychla</copyright>
+	<icon>images\icon.png</icon>
     <tags>SAML2</tags>
   </metadata>
+  <files>
+	<file src="lib/net462/OldMusicBOx.Saml2.dll" target="lib/net462/OldMusicBOx.Saml2.dll" />  
+	<file src="..\..\..\icon.png" target="images\" />
+  </files>
 </package>
 "@
 
@@ -42,3 +47,5 @@ New-Item -ItemType File -Path $nuspec -value $contents
 # spakuj
 Set-Location -Path $path
 nuget pack
+
+Set-Location -Path "../../.."
