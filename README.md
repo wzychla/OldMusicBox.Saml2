@@ -11,6 +11,7 @@ Please refer to the change list and the road map below.
 
 |  Feature  | Status |
 |----|:---:|
+|NuGet|yes|
 |Unsigned Client REDIRECT binding|yes|
 |Signed Client REDIRECT binding|not yet|
 |Unsigned Client POST binding|yes|
