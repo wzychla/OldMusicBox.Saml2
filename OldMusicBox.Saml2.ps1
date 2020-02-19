@@ -34,7 +34,7 @@ $contents = @"
     <tags>SAML2</tags>
   </metadata>
   <files>
-	<file src="lib/net462/OldMusicBOx.Saml2.dll" target="lib/net462/OldMusicBOx.Saml2.dll" />  
+	<file src="lib/net462/OldMusicBox.Saml2.dll" target="lib/net462/OldMusicBox.Saml2.dll" />  
 	<file src="..\..\..\icon.png" target="images\" />
   </files>
 </package>

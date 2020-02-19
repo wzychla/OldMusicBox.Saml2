@@ -155,31 +155,33 @@ namespace OldMusicBox.Saml2
             new LoggerFactory().For(this).Debug(Event.ArtifactResolve, signedArtifactResolveBody);
 
             // sending ArtifactResolve to the IdP
-            var artifactClient         = new WebClient();
-            artifactClient.Headers[HttpRequestHeader.ContentType] = "text/xml";
+            using (var artifactClient = new WebClient())
+            {
+                artifactClient.Headers[HttpRequestHeader.ContentType] = "text/xml";
 
-            string artifactResponseSOAP = null;
-            try
-            {
-                // POST it
-                artifactResponseSOAP = artifactClient.UploadString(configuration.ArtifactResolveUri, signedArtifactResolveBody);
-            }
-            catch (WebException ex)
-            {
-                throw new ArtifactResolveException("Artifact resolution failed because of IdP's invalid response", ex);
-            }
+                string artifactResponseSOAP = null;
+                try
+                {
+                    // POST it
+                    artifactResponseSOAP = artifactClient.UploadString(configuration.ArtifactResolveUri, signedArtifactResolveBody);
+                }
+                catch (WebException ex)
+                {
+                    throw new ArtifactResolveException("Artifact resolution failed because of IdP's invalid response", ex);
+                }
 
-            if (!string.IsNullOrEmpty(artifactResponseSOAP))
-            {
-                // log
-                new LoggerFactory().For(this).Debug(Event.ArtifactResponse, artifactResponseSOAP);
+                if (!string.IsNullOrEmpty(artifactResponseSOAP))
+                {
+                    // log
+                    new LoggerFactory().For(this).Debug(Event.ArtifactResponse, artifactResponseSOAP);
 
-                // parsing the ArtifactResponse
-                return ParseArtifactResponse(artifactResponseSOAP);
-            }
-            else
-            {
-                throw new ArtifactResolveException("Empty response returned from the IdP on the ArtifactResolve call");
+                    // parsing the ArtifactResponse
+                    return ParseArtifactResponse(artifactResponseSOAP);
+                }
+                else
+                {
+                    throw new ArtifactResolveException("Empty response returned from the IdP on the ArtifactResolve call");
+                }
             }
         }
 
