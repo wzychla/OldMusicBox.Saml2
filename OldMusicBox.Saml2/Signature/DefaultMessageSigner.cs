@@ -77,7 +77,7 @@ namespace OldMusicBox.Saml2.Signature
             switch ( x509Configuration.SignatureAlgorithm )
             {
                 case SignatureAlgorithm.SHA1:
-                    signed.SigningKey                 = x509Configuration.SignatureCertificate.PrivateKey;
+                    signed.SigningKey                 = x509Configuration.SignatureCertificate.GetRSAPrivateKey();
                     signed.SignedInfo.SignatureMethod = SignedXml.XmlDsigRSASHA1Url;
                     reference.DigestMethod            = SignedXml.XmlDsigSHA1Url;
                     break;

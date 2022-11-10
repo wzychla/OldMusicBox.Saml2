@@ -3,7 +3,7 @@
 The goal of this project is to provide an independent .NET Saml2 Client/Server Library. The implementation follows the 
 [official specification](http://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf).
 
-## Current Version: 0.66
+## Current Version: 0.70
 
 Please refer to the change list and the road map below.
 
@@ -105,6 +105,10 @@ public ActionResult Logon()
 ```
 
 ## Version History:
+
+* 0.70
+
+	- changed the `.PrivateKey` to `.GetRSAPrivateKey()` to make it compatible with .NET-4.8-only servers
 
 * 0.66.0
 

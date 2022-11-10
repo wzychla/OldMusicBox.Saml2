@@ -20,10 +20,10 @@ namespace OldMusicBox.Saml2
         {
             try
             {
-                if (cert == null || cert.PrivateKey == null)
+                if (cert == null || cert.GetRSAPrivateKey() == null)
                     throw new ArgumentNullException();
 
-                var exportedKeyMaterial = cert.PrivateKey.ToXmlString(true);
+                var exportedKeyMaterial = cert.GetRSAPrivateKey().ToXmlString(true);
                 var key                 = new RSACryptoServiceProvider(new CspParameters(24 /* PROV_RSA_AES */));
                 key.PersistKeyInCsp     = false;
                 key.FromXmlString(exportedKeyMaterial);
