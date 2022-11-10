@@ -82,7 +82,7 @@ namespace OldMusicBox.Saml2.Signature
                     reference.DigestMethod            = SignedXml.XmlDsigSHA1Url;
                     break;
                 case SignatureAlgorithm.SHA256:
-                    signed.SigningKey                 = x509Configuration.SignatureCertificate.ToSha256PrivateKey();
+                    signed.SigningKey                 = x509Configuration.SignatureCertificate.GetRSAPrivateKey();
                     signed.SignedInfo.SignatureMethod = SignedXml.XmlDsigRSASHA256Url;
                     reference.DigestMethod            = SignedXml.XmlDsigSHA256Url;
                     break;
